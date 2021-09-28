@@ -91,6 +91,17 @@ void reverse_output_v(ft::Vector<int> &test)
 	}
 }
 
+void output_my_map(ft::Map<int, std::string> &a)
+{	
+	ft::Map<int, std::string>::iterator begin = a.begin();
+	ft::Map<int, std::string>::iterator end = a.end();
+	while (begin != end)
+	{
+		std::cout << ((*begin).first) << std::endl;
+		begin++;
+	}
+}
+
 int main()
 {
 	std::vector<int> a;
@@ -230,11 +241,23 @@ int main()
 
 	std::cout << "________________MAP________________" << std::endl;
 
-	ft::Map<const std::string, const int> map_test;
-	std::map<std::string, int> map_real;
+	ft::Map<int, std::string> map_test;
+	std::map<int, std::string> map_real;
 
-	const std::string stringa = "Hello";
-	const int inta = 10;
-	const ft::Pair<const std::string, const int> pair_ = ft::Pair<const std::string, const int>(stringa, inta);
+	std::string stringa = "Hello";
+	int inta = 10;
+	const ft::Pair<int, std::string> pair_ = ft::Pair<int, std::string>(inta, stringa);
 	map_test.insert(pair_);
+
+	map_test.insert(ft::make_pair(1, std::string("hi")));
+	map_test.insert(ft::make_pair(8, std::string("hi")));
+	map_test.insert(ft::make_pair(2, std::string("hi")));
+	map_test.insert(ft::make_pair(4, std::string("hi")));
+	map_test.insert(ft::make_pair(5, std::string("hi")));
+	map_test.insert(ft::make_pair(7, std::string("hi")));
+	map_test.insert(ft::make_pair(3, std::string("hi")));
+	map_test.insert(ft::make_pair(6, std::string("hi")));
+	map_test.insert(ft::make_pair(11, std::string("hi")));
+	map_test.insert(ft::make_pair(25, std::string("hi")));
+	output_my_map(map_test);
 }

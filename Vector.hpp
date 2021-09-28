@@ -289,6 +289,14 @@ class Vector
 			{
 				return (*(_pointer + m));
 			}
+			bool operator==(iterator &rhs)
+			{
+				return (rhs._pointer == _pointer);
+			}
+			bool operator==(iterator const &rhs) const
+			{
+				return (rhs._pointer == _pointer);
+			}
 			bool operator!=(iterator const &rhs) const
 			{
 				return (rhs._pointer != _pointer ? true : false);
@@ -392,6 +400,10 @@ class Vector
 			reference operator[](int m)
 			{
 				return (*(_pointer + m));
+			}
+			bool operator==(reverse_iterator const &rhs)
+			{
+				return (rhs._pointer == _pointer);
 			}
 			bool operator!=(reverse_iterator const &rhs) const
 			{
@@ -644,7 +656,7 @@ class Vector
 				temp_cap = _capacity;
 			try
 			{
-				buff = _allocator.allocate(_capacity);
+				buff = _allocator.allocate(temp_cap);
 			}
 			catch (std::exception &e)
 			{

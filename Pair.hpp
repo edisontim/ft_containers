@@ -38,10 +38,11 @@ class Pair
 		
 		//		OPERATORS
 		//___________________________________
-		Pair& operator= (const Pair &cpy)
+		Pair& operator=(const Pair &cpy)
 		{
-			first = T1(cpy.first);
-			second = T2(cpy.second);
+			this->first = T1(cpy.first);
+			this->second = T2(cpy.second);
+			return (*this);
 		}
 		bool operator==(const Pair &rhs)
 		{
