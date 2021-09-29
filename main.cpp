@@ -245,19 +245,27 @@ int main()
 	std::map<int, std::string> map_real;
 
 	std::string stringa = "Hello";
-	int inta = 10;
-	const ft::Pair<int, std::string> pair_ = ft::Pair<int, std::string>(inta, stringa);
-	map_test.insert(pair_);
 
-	map_test.insert(ft::make_pair(1, std::string("hi")));
-	map_test.insert(ft::make_pair(8, std::string("hi")));
-	map_test.insert(ft::make_pair(2, std::string("hi")));
-	map_test.insert(ft::make_pair(4, std::string("hi")));
-	map_test.insert(ft::make_pair(5, std::string("hi")));
-	map_test.insert(ft::make_pair(7, std::string("hi")));
-	map_test.insert(ft::make_pair(3, std::string("hi")));
-	map_test.insert(ft::make_pair(6, std::string("hi")));
-	map_test.insert(ft::make_pair(11, std::string("hi")));
-	map_test.insert(ft::make_pair(25, std::string("hi")));
+	map_test.insert(ft::make_pair(1, std::string("Hello")));
+	map_test.insert(ft::make_pair(10, std::string("lo")));
+	map_test.insert(ft::make_pair(8, std::string("LOL")));
+	map_test.insert(ft::make_pair(2, std::string("aisufdha")));
+	map_test.insert(ft::make_pair(4, std::string("1002391093")));
+	map_test.insert(ft::make_pair(5, std::string("blabalbla")));
+	map_test.insert(ft::make_pair(7, std::string("lolooloo")));
+	map_test.insert(ft::make_pair(3, std::string("lulu")));
+	map_test.insert(ft::make_pair(6, std::string("lala")));
+	map_test.insert(ft::make_pair(11, std::string("haha")));
+	map_test.insert(ft::make_pair(25, std::string("huhu")));
+	map_test.insert(ft::make_pair(-10, std::string("hihi")));
+	map_test.insert(ft::make_pair(-2, std::string("Bro")));
+	map_test.insert(ft::make_pair(772, std::string("adfhafasdfadfasdfasdfadsf")));
+	map_test.insert(ft::make_pair(2398402, std::string("yyyyyyyyyyy")));
+	map_test.insert(ft::make_pair(19, std::string("aaaaaaaaaaa")));
+	map_test.insert(ft::make_pair(100, std::string("pppppppppppppp")));
+
+
 	output_my_map(map_test);
+
+	std::cout << map_test[-10] << std::endl;
 }

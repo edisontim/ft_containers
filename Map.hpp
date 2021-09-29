@@ -17,7 +17,7 @@ class Map
 	typedef bool 												(*key_compare)();
 	typedef typename Vector<Pair<Key, T> >::iterator			iterator;
 	typedef typename Vector<Pair<Key, T> >::reverse_iterator	reverse_iterator;
-	
+	typedef unsigned int										size_type;
 	private:
 		Vector<Pair<Key, T> > _vector;
 		Compare				_comp;
@@ -55,6 +55,21 @@ class Map
 		{
 			_vector = rhs._vector;
 		}
+		mapped_type& operator[] (const key_type& k)
+		{
+			iterator search = find(k);
+			if (find(k) == _vector.end()) //the key was not found in the map
+			{
+				mapped_type value = mapped_type();
+				Pair<iterator, bool> ret = insert(ft::make_pair<Key, T>(k, value));
+				return ((*ret.first).second);
+			}
+			else
+			{
+				return ((*search).second);
+			}
+			
+		}
 
 		//		UTILS
 		//___________________________________
@@ -74,6 +89,19 @@ class Map
 		{
 			return (_vector.end());
 		}
+		bool empty() const
+		{
+			return (_vector.empty());
+		}
+		size_type size() const
+		{
+			return (_vector.size());
+		}
+		size_type max_size() const
+		{
+			return (_vector.max_size());
+		}
+
 		iterator find (const key_type& k)
 		{
 			const iterator ret = binary_search(0, _vector.size() - 1, k);
@@ -121,14 +149,24 @@ class Map
 		}
 		iterator insert_pos(int low, int high, const key_type &key)
 		{
-			unsigned int mid = (low + high) / 2;
-			if (mid + 1 == _vector.size())
-				return (_vector.end());
-			if (_vector[mid].first < key && key < _vector[mid + 1].first)
-				return (iterator(&_vector[mid + 1]));
-			if (_comp(_vector[mid].first, key))
-				return (insert_pos(mid + 1, high, key));
-			return (insert_pos(low, (mid - 1), key));
+			unsigned int i;
+
+			i = 0;
+			(void)low;
+			(void)high;
+			// int mid = (low + high) / 2;
+			// if (static_cast<unsigned int>(mid + 1) ==_vector.size())
+			// 	return (_vector.end());
+			// if (_vector[mid].first < key && key < _vector[mid + 1].first)
+			// 	return (iterator(&_vector[mid + 1]));
+			// if (_comp(_vector[mid].first, key))
+			// 	return (insert_pos(mid + 1, high, key));
+			// return (insert_pos(low, (mid - 1), key));
+			while (i < _vector.size() && _comp(_vector[i].first, key))
+			{
+				i++;
+			}
+			return (iterator(&_vector[i]));
 		}
 };
 }
