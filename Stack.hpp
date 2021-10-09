@@ -7,93 +7,94 @@
 #include <algorithm>
 #include <typeinfo>
 #include <type_traits>
-#include "Vector.hpp"
+#include "vector.hpp"
 
 namespace ft
 {
-	template <class T>
-	class Stack
+	template <class T, class Container = vector<T> >
+	class stack
 	{
-		private :
-			Vector<T>		_vector;
+		protected :
+			Container		c;
 
 		public :
 			typedef T				value_type;
-			typedef Vector<T>		container_type;
+			typedef Container		container_type;
 			typedef unsigned int	size_type;
 
 		//		CONSTRUCTOR/DESTRUCTOR
 		//___________________________________
 		
-			Stack()
+			stack()
 			{
 			}
-			Stack(const Vector<T> &cpy)
+			stack(const vector<T> &cpy)
 			{
-				typename ft::Vector<T>::iterator begin = cpy.begin();
-				typename ft::Vector<T>::iterator end = cpy.end();
+				typename ft::vector<T>::iterator begin = cpy.begin();
+				typename ft::vector<T>::iterator end = cpy.end();
 
-				_vector.assign(begin, end);
+				c.assign(begin, end);
 			}
 
 		//		UTILS
 		//___________________________________
 		bool empty(void)
 		{
-			return (!_vector.size());
+			return (!c.size());
 		}
 		size_type size(void) const
 		{
-			return (_vector.size());
+			return (c.size());
 		}
 		value_type& top() /*throw (std::exception)*/
 		{
 			if (empty())
 				throw std::runtime_error("top() called on empty stack.");
-			return (_vector.back());
+			return (c.back());
 		}
 		const value_type& top() const
 		{
 			if (empty())
 				throw std::runtime_error("top() called on empty stack.");
-			return (_vector.back());
+			return (c.back());
 		}
 		void push(const value_type& val)
 		{
-			_vector.push_back(val);
+			c.push_back(val);
 		}
 		void pop(void)
 		{
 			if (empty())
 				throw std::runtime_error("pop called on empty stack.");
-			_vector.pop_back();
+			c.pop_back();
 		}
 
+		private :
 		//		OPERATORS
 		//___________________________________
-		bool operator==(const Stack<T> &rhs)
+		friend bool operator==(const stack<T> &lhs, const stack<T> &rhs)
 		{
-			return (_vector == rhs._vector);
+			return (lhs.c == rhs.c);
 		}
-		bool operator!=(const Stack<T> &rhs)
+		friend bool operator!=(const stack<T> &lhs, const stack<T> &rhs)
 		{
-			return (_vector != rhs._vector);
+			return (lhs.c != rhs.c);
 		}
-		bool operator<(const Stack<T> &rhs)
+		friend bool operator<(const stack<T> &lhs, const stack<T> &rhs)
 		{
-			return (_vector < rhs._vector);
+			return (lhs.c < rhs.c);
 		}
-		bool operator<=(const Stack<T> &rhs)
+		friend bool operator<=(const stack<T> &lhs, const stack<T> &rhs)
 		{
-			return (_vector <= rhs._vector);
+			return (lhs.c <= rhs.c);
 		}
-		bool operator>(const Stack<T> &rhs)
+		friend bool operator>(const stack<T> &lhs, const stack<T> &rhs)
 		{
-			return (_vector > rhs._vector);
+			return (lhs.c > rhs.c);
 		}
-		bool operator>=(const Stack<T> &rhs)
+		friend bool operator>=(const stack<T> &lhs, const stack<T> &rhs)
 		{
-			return (_vector >= rhs._vector);
+			return (lhs.c >= rhs.c);
 		}
 	};
 }

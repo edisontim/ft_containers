@@ -1,8 +1,8 @@
 CXX		= clang++
-CXXFLAGS	= -Wall -Werror -Wextra -std=c++98
-SRCS	= 
+CXXFLAGS	= -Wall -Werror -Wextra -std=c++98 -fsanitize=address -g
+SRCS	= main.cpp
 OBJS	= ${SRCS:.cpp=.o}
-NAME	= 
+NAME	= tests
 
 all		:	$(NAME)
 

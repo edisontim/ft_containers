@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <typeinfo>
 #include <type_traits>
+#include <iterator>
+#include "iterator_traits.hpp"
 
 double pow2(double num)
 {
@@ -15,14 +17,14 @@ double pow2(double num)
 
 namespace ft
 {
-template <class T>
-class Vector
+template <class T, class Alloc = std::allocator<T> >
+class vector
 {
 	private:
-		T	*_array;
-		unsigned int	_capacity;
-		unsigned int	_size;
-		std::allocator<T> _allocator;
+		T							*_array;
+		unsigned int				_capacity;
+		unsigned int				_size;
+		Alloc						_allocator;
 
 	public:
 		typedef T					value_type;
@@ -38,7 +40,7 @@ class Vector
 		void _alloc_copy(size_type temp_cap)
 		{
 			unsigned int	i;
-			value_type		*buff;
+			pointer		buff;
 			
 			try
 			{
@@ -59,172 +61,33 @@ class Vector
 			_array = buff;
 			_capacity = temp_cap;
 		}
-	
-	public:
 
-		//		OPERATORS
-		//___________________________________
-		Vector const &operator=(Vector const &rhs)
-		{
-			T				*buffer;
-			unsigned int	i;
-
-			i = 0;
-			this->_allocator = rhs._allocator;
-			while (i < _size)
-				_allocator.destroy(&_array[i++]);
-			_allocator.deallocate(_array, _capacity);
-			i = 0;
-			try
-			{
-				this->_array = _allocator.allocate(rhs._capacity);
-			}
-			catch (std::exception &e)
-			{
-				std::cout << e.what() << std::endl;
-				return;
-			}
-			while (i < this->_occupied_space)
-			{
-				buffer[i] = rhs._array[i];
-				i++;
-			}
-			this->_capacity = rhs._capacity;
-			this->_size = rhs._size;
-			this->_array = buffer;
-		}
-
-		value_type &operator[](int n)
-		{
-			return (*(_array + n));
-		}
-
-		const_reference operator[](int n) const
-		{
-			return (*(_array + n));
-		}
-
-		bool operator==(const Vector<T> &rhs)
-		{
-			unsigned int	i;
-
-			i = 0;
-			if (_size != rhs._size)
-				return (false);
-			while (i < _size)
-			{
-				if (_array[i] != rhs._array[i])
-					return (false);
-				i++;
-			}
-			return (true);
-		}
-		bool operator!=(const Vector<T> &rhs)
-		{
-			unsigned int	i;
-
-			i = 0;
-			if (_size != rhs._size)
-				return (true);
-			while (i < _size)
-			{
-				if (_array[i] != rhs._array[i])
-					return (true);
-				i++;
-			}
-			return (false);
-		}
-		bool operator<(const Vector<T> &rhs)
-		{
-			unsigned int i;
-
-			i = 0;
-			while (i < _size && i < rhs._size)
-			{
-				if (_array[i] < rhs._array[i])
-					return (true);
-				if (_array[i] > rhs._array[i])
-					return (false);
-				i++;
-			}
-			return (_size < rhs._size ? true : false);
-		}
-		bool operator<=(const Vector<T> &rhs)
-		{
-			unsigned int i;
-
-			i = 0;
-			while (i < _size && i < rhs._size)
-			{
-				if (_array[i] <= rhs._array[i])
-					return (true);
-				if (_array[i] > rhs._array[i])
-					return (false);
-				i++;
-			}
-			return (_size <= rhs._size ? true : false);
-		}
-		bool operator>(const Vector<T> &rhs)
-		{
-			unsigned int i;
-
-			i = 0;
-			while (i < _size && i < rhs._size)
-			{
-				if (_array[i] > rhs._array[i])
-					return (true);
-				if (_array[i] < rhs._array[i])
-					return (false);
-				i++;
-			}
-			return (_size > rhs._size ? true : false);
-		}
-		bool operator>=(const Vector<T> &rhs)
-		{
-			unsigned int i;
-
-			i = 0;
-			while (i < _size && i < rhs._size)
-			{
-				if (_array[i] >= rhs._array[i])
-					return (true);
-				if (_array[i] < rhs._array[i])
-					return (false);
-				i++;
-			}
-			return (_size >= rhs._size ? true : false);
-		}
-
-// 							ITERATOR_BEGINNING
-// _________________________________________________________________________
-
-		class iterator
+		public :
+		class iterator : public ft::iterator<ft::random_access_iterator_tag, value_type, difference_type, pointer, reference>
 		{
 			private:
 				T		*_pointer;
 
 			public:
-				bool	rev;
 
 				typedef T								value_type;
-				typedef std::ptrdiff_t					difference_type;
+				typedef ptrdiff_t						difference_type;
 				typedef T*								pointer;
 				typedef T&								reference;
 				typedef const T&						const_reference;
-				typedef std::random_access_iterator_tag	iterator_category;
 
 			//		CONSTRUCTOR/DESTRUCTOR
 			//___________________________________
-			iterator() : _pointer(NULL), rev(0)
+			iterator() : _pointer(NULL)
 			{
 			}
-			iterator(T *pointer) : _pointer(pointer), rev(0)
+			iterator(T *pointer) : _pointer(pointer)
 			{
 			}
 			~iterator()
 			{
 			}
-			iterator(iterator const &cpy) : _pointer(cpy._pointer), rev(0)
+			iterator(iterator const &cpy) : _pointer(cpy._pointer)
 			{
 			}
 			//		OPERATORS
@@ -271,7 +134,7 @@ class Vector
 				(void)blank;
 				iterator temp(*this);
 				--*this;
-				return (temp);
+				return (*this);
 			}
 			reference operator*()
 			{
@@ -311,29 +174,40 @@ class Vector
 			}
 		};
 
-		class reverse_iterator
+		class reverse_iterator : public ft::reverse_iterator<ft::random_access_iterator_tag, value_type, difference_type, pointer, reference>
 		{
+
 			private:
 				T		*_pointer;
 
 			public:
-				bool	rev;
 
 				typedef T value_type;
 				typedef std::ptrdiff_t difference_type;
 				typedef T* pointer;
 				typedef T& reference;
 				typedef std::random_access_iterator_tag iterator_category;
+
+			template <class Iterator>
+			struct iterator_traits
+			{
+				typedef typename Iterator::value_type			value_type;
+				typedef typename Iterator::difference_type		difference_type;
+				typedef typename Iterator::pointer				pointer;
+				typedef typename Iterator::reference			reference;
+				typedef typename Iterator::iterator_category	iterator_category;
+
+			};
 			
 			//		CONSTRUCTOR/DESTRUCTOR
 			//___________________________________
-			reverse_iterator() : _pointer(NULL), rev(1)
+			reverse_iterator() : _pointer(NULL)
 			{
 			}
-			reverse_iterator(T *pointer) : _pointer(pointer), rev(1)
+			reverse_iterator(T *pointer) : _pointer(pointer)
 			{
 			}
-			reverse_iterator(reverse_iterator const &cpy) : _pointer(cpy._pointer), rev(1)
+			reverse_iterator(reverse_iterator const &cpy) : _pointer(cpy._pointer)
 			{
 			}
 			~reverse_iterator()
@@ -422,14 +296,151 @@ class Vector
 // 							ITERATOR_END
 // _________________________________________________________________________
 
-	
+
+
+	public:
+
+		//		OPERATORS
+		//___________________________________
+		vector const &operator=(vector const &rhs)
+		{
+			T				*buffer;
+			unsigned int	i;
+
+			i = 0;
+			this->_allocator = rhs._allocator;
+			while (i < _size)
+				_allocator.destroy(&_array[i++]);
+			_allocator.deallocate(_array, _capacity);
+			i = 0;
+			try
+			{
+				buffer = _allocator.allocate(rhs._capacity);
+			}
+			catch (std::exception &e)
+			{
+				std::cout << e.what() << std::endl;
+			}
+			while (i < _size)
+			{
+				buffer[i] = rhs._array[i];
+				i++;
+			}
+			this->_capacity = rhs._capacity;
+			this->_size = rhs._size;
+			this->_array = buffer;
+			return (*this);
+		}
+
+		value_type &operator[](int n)
+		{
+			return (*(_array + n));
+		}
+
+		const_reference operator[](int n) const
+		{
+			return (*(_array + n));
+		}
+
+		bool operator==(const vector<T> &rhs)
+		{
+			unsigned int	i;
+
+			i = 0;
+			if (_size != rhs._size)
+				return (false);
+			while (i < _size)
+			{
+				if (_array[i] != rhs._array[i])
+					return (false);
+				i++;
+			}
+			return (true);
+		}
+		bool operator!=(const vector<T> &rhs)
+		{
+			unsigned int	i;
+
+			i = 0;
+			if (_size != rhs._size)
+				return (true);
+			while (i < _size)
+			{
+				if (_array[i] != rhs._array[i])
+					return (true);
+				i++;
+			}
+			return (false);
+		}
+		bool operator<(const vector<T> &rhs)
+		{
+			unsigned int i;
+
+			i = 0;
+			while (i < _size && i < rhs._size)
+			{
+				if (_array[i] < rhs._array[i])
+					return (true);
+				if (_array[i] > rhs._array[i])
+					return (false);
+				i++;
+			}
+			return (_size < rhs._size ? true : false);
+		}
+		bool operator<=(const vector<T> &rhs)
+		{
+			unsigned int i;
+
+			i = 0;
+			while (i < _size && i < rhs._size)
+			{
+				if (_array[i] <= rhs._array[i])
+					return (true);
+				if (_array[i] > rhs._array[i])
+					return (false);
+				i++;
+			}
+			return (_size <= rhs._size ? true : false);
+		}
+		bool operator>(const vector<T> &rhs)
+		{
+			unsigned int i;
+
+			i = 0;
+			while (i < _size && i < rhs._size)
+			{
+				if (_array[i] > rhs._array[i])
+					return (true);
+				if (_array[i] < rhs._array[i])
+					return (false);
+				i++;
+			}
+			return (_size > rhs._size ? true : false);
+		}
+		bool operator>=(const vector<T> &rhs)
+		{
+			unsigned int i;
+
+			i = 0;
+			while (i < _size && i < rhs._size)
+			{
+				if (_array[i] >= rhs._array[i])
+					return (true);
+				if (_array[i] < rhs._array[i])
+					return (false);
+				i++;
+			}
+			return (_size >= rhs._size ? true : false);
+		}
+
+
 		//		CONSTRUCTOR/DESTRUCTOR
 		//___________________________________
-		Vector() :  _array(NULL), _capacity(0), _size(0), _allocator(allocator_type())
+		vector() :  _array(NULL), _capacity(0), _size(0), _allocator(allocator_type())
 		{
 		}
 
-		Vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) : _size(static_cast<int>(n)), _allocator(alloc)
+		vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) : _size(static_cast<int>(n)), _allocator(alloc)
 		{
 			size_type	i;
 			
@@ -438,17 +449,16 @@ class Vector
 				push_back(val);
 		}
 
-		~Vector()
+		~vector()
 		{
 			unsigned int	i;
 
 			i = 0;
 			while (i < _size)
 				_allocator.destroy(&_array[i++]);
-			_allocator.deallocate(_array, _capacity);
 		}
 
-		Vector(iterator first, iterator last, const allocator_type& alloc = allocator_type()) : _allocator(alloc), _size(0), _capacity(0) 
+		vector(iterator first, iterator last, const allocator_type& alloc = allocator_type()) : _allocator(alloc), _size(0), _capacity(0) 
 		{
 			while (first != last)
 			{
@@ -501,18 +511,19 @@ class Vector
 		}
 		void push_back(const value_type val)
 		{
-			if (_size != _capacity)
+			if (_size < _capacity)
+			{
 				_array[_size] = val;
+			}
 			else
 			{
 				size_type	temp_cap;
 
+				temp_cap = _capacity * 2;
 				if (!_capacity)
 					temp_cap = 1;
-				else
-					temp_cap = _capacity * 2;
 				if (temp_cap > max_size())
-					return ;
+					throw std::exception();
 				_alloc_copy(temp_cap);
 				_array[_size] = val;
 			}
@@ -531,7 +542,7 @@ class Vector
 		// capacity is unsigned int, so max number of objects is UINT_MAX
 		size_type max_size() const
 		{
-			return (std::min(std::numeric_limits<difference_type>::max(), static_cast<long>(UINT_MAX)));
+			return (std::numeric_limits<difference_type>::max());
 		}
 		void resize(size_type n, value_type val = value_type())
 		{
@@ -567,15 +578,15 @@ class Vector
 		}
 		reference at(size_type n)
 		{
-			if (n > _size - 1)
-				throw std::out_of_range("Not in the range of the vector");
+			if (_size <= n)
+				throw std::exception();
 			else
 				return (_array[n]);
 		}
 		const_reference at(size_type n) const
 		{
 			if (n > _size - 1)
-				throw std::out_of_range("Not in the range of the vector");
+				throw std::exception();
 			else
 				return (_array[n]);
 		}
@@ -641,7 +652,30 @@ class Vector
 				i++;
 			}
 		}
-		iterator insert(iterator position, const value_type& val)
+
+		private :
+
+		iterator	single_val_opti_insert(iterator position, const value_type &val)
+		{
+			iterator	iter;
+			int			i;
+
+			i = _size;
+			iter = end();
+			while (iter != position)
+			{
+				_array[i] = _array[i - 1];
+				iter--;
+				i--;
+			}
+			_array[i] = val;
+			_size++;
+			return (iterator(&_array[i]));
+		}
+
+		public :
+
+		iterator	insert(iterator position, const value_type& val)
 		{
 			pointer buff;
 			unsigned int	i;
@@ -650,10 +684,11 @@ class Vector
 			i = 0;
 			iterator iter = this->begin();
 			iterator end = this->end();
-			if (_size + 1 > _capacity)
-				temp_cap= _capacity + 1;
-			else 
-				temp_cap = _capacity;
+
+			if (_size >= _capacity)
+				temp_cap = _capacity * 2;
+			else
+				return (single_val_opti_insert(position, val));
 			try
 			{
 				buff = _allocator.allocate(temp_cap);
@@ -848,9 +883,9 @@ class Vector
 			_size = _size - distance(first, last);
 			return (deleted);
 		}
-		void swap (Vector& x)
+		void swap (vector& x)
 		{
-			T*	_array_buff;
+			T*				_array_buff;
 			unsigned int	_size_buff;
 			unsigned int	_capacity_buff;
 
@@ -861,6 +896,7 @@ class Vector
 			this->_array = x._array;
 			this->_size = x._size;
 			this->_capacity = x._capacity; 
+
 			x._array = _array_buff;
 			x._size = _size_buff;
 			x._capacity = _capacity_buff;
