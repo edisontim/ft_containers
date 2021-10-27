@@ -7,7 +7,8 @@
 #include <algorithm>
 #include <typeinfo>
 #include <type_traits>
-#include "vector.hpp"
+#include "Vector.hpp"
+#include "Iterator.hpp"
 
 namespace ft
 {

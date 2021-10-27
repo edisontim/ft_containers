@@ -1,8 +1,8 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
-#include "pair.hpp"
-#include "vector.hpp"
+#include "Pair.hpp"
+#include "Vector.hpp"
 
 namespace ft
 {

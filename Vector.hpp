@@ -7,8 +7,9 @@
 #include <algorithm>
 #include <typeinfo>
 #include <type_traits>
-#include <iterator>
-#include "iterator_traits.hpp"
+// #include <iterator>
+// #include "iterator_traits.hpp"
+#include "Iterator.hpp"
 
 double pow2(double num)
 {
@@ -174,7 +175,7 @@ class vector
 			}
 		};
 
-		class reverse_iterator : public ft::reverse_iterator<ft::random_access_iterator_tag, value_type, difference_type, pointer, reference>
+		class reverse_iterator : public ft::reverse_iterator<iterator>
 		{
 
 			private:
