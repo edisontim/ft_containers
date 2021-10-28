@@ -437,9 +437,7 @@ class vector
 
 		//		CONSTRUCTOR/DESTRUCTOR
 		//___________________________________
-		vector() :  _array(NULL), _capacity(0), _size(0), _allocator(allocator_type())
-		{
-		}
+		vector(const allocator_type& alloc = allocator_type()) : _array(NULL), _capacity(0), _size(0), _allocator(alloc) {}
 
 		vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) : _size(static_cast<int>(n)), _allocator(alloc)
 		{
@@ -447,7 +445,24 @@ class vector
 			
 			i = 0;
 			while (i < n)
+			{
 				push_back(val);
+				i++;
+			}
+		}
+
+		template <class InputIterator>
+		vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) : _allocator(alloc)
+		{
+			assign(first, last);
+		}
+
+		vector (const vector& x)
+		{
+			iterator begin = x.begin();
+			iterator last = x.end();
+
+			assign(begin, last);
 		}
 
 		~vector()
@@ -457,15 +472,7 @@ class vector
 			i = 0;
 			while (i < _size)
 				_allocator.destroy(&_array[i++]);
-		}
-
-		vector(iterator first, iterator last, const allocator_type& alloc = allocator_type()) : _allocator(alloc), _size(0), _capacity(0) 
-		{
-			while (first != last)
-			{
-				push_back(*first);
-				first++;
-			}
+			_allocator.deallocate(_array, _capacity);
 		}
 
 		//		UTILS
@@ -629,7 +636,7 @@ class vector
 			i = 0;
 			while (first != last)
 			{
-				_array[i] = *first;
+				_array[i] = value_type(*first);
 				_size++;
 				first++;
 			}
@@ -933,6 +940,13 @@ class vector
 	{
 		it = it + n;
 	}
+
+	template<typename Base, typename T>
+	inline bool instanceof(const T)
+	{
+		return std::is_base_of<Base, T>::value;
+	}
+
 }
 
 #endif

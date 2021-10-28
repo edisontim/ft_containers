@@ -3,6 +3,7 @@
 
 namespace ft
 {
+
 template <class T1, class T2>
 class pair
 {
@@ -19,30 +20,20 @@ class pair
 
 		//		CONSTRUCTORS/DESTRUCTOR
 		//___________________________________
-		pair(void) : first(T1()), second(T2())
-		{
-			first = T1();
-			second = T2();
-		}
-		pair(const pair &cpy) : first(T1(cpy.first)), second(T2(cpy.second))
-		{
-
-		}
-		pair (const first_type& a, const second_type& b) : first(T1(a)), second(T2(b))
-		{
-		}
-		~pair()
-		{
-
-		}
+		pair(void) : first(T1()), second(T2()){}
+		
+		template<class U, class V>
+		pair(const pair<U, V> &cpy) : first(cpy.first), second(cpy.second) {}
+		
+		pair (const first_type& a, const second_type& b) : first(a), second(b){}
+		
+		~pair(){}
 		
 		//		OPERATORS
 		//___________________________________
 		pair& operator=(const pair &cpy)
 		{
-			this->first = T1(cpy.first);
-			this->second = T2(cpy.second);
-			return (*this);
+			return (pair(cpy));
 		}
 		bool operator==(const pair &rhs)
 		{
@@ -74,11 +65,19 @@ class pair
 		}
 };
 
+
 template <class T1, class T2>
 ft::pair<T1,T2> make_pair (T1 x, T2 y)
 {
 	return (pair<T1, T2>(x, y));
 }
+
+
+// template <class T1, class T2>
+// const ft::pair<const T1,T2> make_pair (const T1 x, T2 y)
+// {
+// 	return (pair<T1, T2>(x, y));
+// }
 
 }
 

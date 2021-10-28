@@ -15,10 +15,10 @@ class map
 
 	typedef Key													key_type;
 	typedef T													mapped_type;
-	typedef pair<key_type, mapped_type>							value_type;
-	typedef bool 												(*key_compare)();
-	typedef typename vector<pair<Key, T> >::iterator			iterator;
-	typedef typename vector<pair<Key, T> >::reverse_iterator	reverse_iterator;
+	typedef pair<const Key, T>									value_type;
+	typedef const Compare 										key_compare;
+	typedef typename vector<value_type>::iterator				iterator;
+	typedef typename vector<value_type>::reverse_iterator		reverse_iterator;
 	typedef unsigned int										size_type;
 	typedef const iterator										const_iterator;
 	typedef std::allocator<T>									allocator_type;
@@ -44,9 +44,10 @@ class map
 
 		//		CONSTRUCTORS/DESTRUCTOR
 		//___________________________________
-		map(const Compare& comp = Compare()) : _vector(vector<pair<Key, T> >())
+		map(const key_compare& comp = key_compare(), const allocator_type &alloc = allocator_type())
 		{
-			this->_comp = comp;
+			// _vector = vector<value_type>(alloc);
+			_comp = comp;
 		}
 		map (const map &x)
 		{
@@ -58,8 +59,9 @@ class map
 			_vector.assign(begin, end);
 		}
 		template <class InputIterator>
-		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare()) : _comp(comp)
+		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type &alloc = allocator_type()) : _comp(comp)
 		{
+			_vector.allocator = alloc;
 			_vector = vector<pair<Key, T> >();
 			_vector.assign(first, last);
 		}
@@ -335,6 +337,7 @@ class map
 	template<> struct is_integral_base<unsigned long long>			: public std::true_type {};
 
 	template<class T> struct is_integral : public is_integral_base<typename std::remove_cv<T>::type > {};
+
 
 }
 
