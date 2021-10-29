@@ -5,11 +5,11 @@ namespace ft
 {
 
 
-	struct input_iterator_tag  {};
-	struct output_iterator_tag {};
-	struct forward_iterator_tag       : public input_iterator_tag         {};
-	struct bidirectional_iterator_tag : public forward_iterator_tag       {};
-	struct random_access_iterator_tag : public bidirectional_iterator_tag {};
+	struct input_iterator_tag	{};
+	struct output_iterator_tag	{};
+	struct forward_iterator_tag 		: public input_iterator_tag			{};
+	struct bidirectional_iterator_tag	: public forward_iterator_tag			{};
+	struct random_access_iterator_tag	: public bidirectional_iterator_tag	{};
 
 
 	template<class Iterator>
@@ -36,11 +36,11 @@ namespace ft
 			class Pointer = T*, class Reference = T&>
 	struct iterator
 	{
-		typedef T         value_type;
-		typedef Distance  difference_type;
-		typedef Pointer   pointer;
-		typedef Reference reference;
-		typedef Category  iterator_category;
+		typedef T			value_type;
+		typedef Distance	difference_type;
+		typedef Pointer		pointer;
+		typedef Reference	reference;
+		typedef Category	iterator_category;
 	};
 
 
@@ -56,10 +56,10 @@ namespace ft
 	protected:
 		Iterator current;
 	public:
-		typedef Iterator                                            iterator_type;
-		typedef typename iterator_traits<Iterator>::difference_type difference_type;
-		typedef typename iterator_traits<Iterator>::reference       reference;
-		typedef typename iterator_traits<Iterator>::pointer         pointer;
+		typedef Iterator											iterator_type;
+		typedef typename iterator_traits<Iterator>::difference_type	difference_type;
+		typedef typename iterator_traits<Iterator>::reference		reference;
+		typedef typename iterator_traits<Iterator>::pointer			pointer;
 	};
 
 

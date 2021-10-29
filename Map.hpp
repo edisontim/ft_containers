@@ -15,7 +15,7 @@ class map
 
 	typedef Key													key_type;
 	typedef T													mapped_type;
-	typedef pair<const Key, T>									value_type;
+	typedef pair<Key, T>									value_type;
 	typedef const Compare 										key_compare;
 	typedef typename vector<value_type>::iterator				iterator;
 	typedef typename vector<value_type>::reverse_iterator		reverse_iterator;
@@ -46,7 +46,7 @@ class map
 		//___________________________________
 		map(const key_compare& comp = key_compare(), const allocator_type &alloc = allocator_type())
 		{
-			// _vector = vector<value_type>(alloc);
+			_vector = vector<value_type>(alloc);
 			_comp = comp;
 		}
 		map (const map &x)
@@ -337,7 +337,6 @@ class map
 	template<> struct is_integral_base<unsigned long long>			: public std::true_type {};
 
 	template<class T> struct is_integral : public is_integral_base<typename std::remove_cv<T>::type > {};
-
 
 }
 
