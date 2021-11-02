@@ -4,7 +4,7 @@
 #include <sys/time.h>
 
 
-#if 1 //CREATE A REAL STL EXAMPLE
+#if 0 //CREATE A REAL STL EXAMPLE
 	#include <map>
 	#include <stack>
 	#include <vector>
@@ -14,6 +14,8 @@
 	#include "Stack.hpp"
 	#include "Vector.hpp"
 	#include "Pair.hpp"
+	#include "utils.hpp"
+	#include "Iterator.hpp"
 #endif
 
 
@@ -82,7 +84,8 @@ void output_my_map(ft::map<int, std::string> &a)
 
 int main()
 {
-	
+		std::vector<int>::iterator t;
+
 	struct timeval time;
 	gettimeofday(&time, NULL); // Start Time
 
@@ -105,7 +108,7 @@ int main()
 
 
 
-	test.push_back(1);
+	test.push_back(100);
 	test.push_back(0);
 	test.push_back(3);
 	test.push_back(4);
@@ -123,12 +126,19 @@ int main()
 	ft::vector<int>::iterator begin = test.begin();
 	ft::vector<int>::const_iterator end = test.end();
 
+	ft::vector<int>::reverse_iterator rbegin = test.rbegin();
+	ft::vector<int> tests(10, 100);
+	ft::vector<int>::const_reverse_iterator rend = tests.rend();
+	
+
 	std::cout << "Comparing const_iterator and iterator : " << (begin != end) << std::endl;
 
+	std::cout << "Comparing const_reverse_iterator and reverse_iterator : " << (rbegin != rend) << std::endl;
 
 	std::cout << std::endl << std::endl << std::endl;
 	
-	
+		(*begin++);
+
 	std::cout << "BEFORE SWAP test is :" << std::endl;
 	
 	output_v(test);
@@ -137,7 +147,7 @@ int main()
 
 	test.swap(test1);
 	
-	
+
 	std::cout << "AFTER SWAP test is :" << std::endl;
 	output_v(test);
 	std::cout << "test1 is :" << std::endl;
@@ -270,7 +280,48 @@ int main()
 
 	std::cout << "Execution time is " << totalTime << std::endl;
 
+	std::cout << std::endl << std::endl << std::endl;
 
+
+	std::cout << "________________EXTRA TESTS________________" << std::endl;
+
+	ft::vector<int>::iterator begin1 = test1.begin();
+
+	output_v(test1);
+	std::cout << std::endl << std::endl << std::endl;
+
+	std::cout << "*begin :" << *begin1 << std::endl;
+
+	std::cout << "*begin++ :" << *begin1++ << std::endl;
+	std::cout << "*begin-- :" << *begin1-- << std::endl;
+	std::cout << "*++begin :" << *++begin1 << std::endl;
+	std::cout << "*--begin :" << *--begin1 << std::endl;
+	
+	*begin1 = 10;
+
+	std::cout << "*begin1 = 10 : " << *begin1 << std::endl;
+
+	std::cout << "*begin1 : " << *begin1 << std::endl;
+	begin1 += 2;
+
+	ft::vector<int>::iterator begin2 = test1.begin();
+	int a = begin1 - begin2;
+	std::cout << "begin - begin, should be 2 : " << a << std::endl;
+	std::cout << "*begin1 + 2 : " << *begin1 << std::endl;
+
+	begin1 += 2;
+	
+	std::cout << "*begin += 2 : " << *begin1 << std::endl;
+	
+	begin1 -= 2;
+	
+	std::cout << "*begin -= 2 : " << *begin1 << std::endl;
+
+
+	ft::vector<int>::const_iterator test12 = test1.begin();
+	ft::vector<int>::iterator test123 = test1.begin();
+
+	std::cout << "Comparing const_iterator and iterator : " << (test12 == test123) << std::endl;
 }
 
 
@@ -283,7 +334,7 @@ int main()
 // #include <iostream>
 // #include <string>
 // #include <deque>
-// #if 0 //CREATE A REAL STL EXAMPLE
+// #if 1 //CREATE A REAL STL EXAMPLE
 // 	#include <map>
 // 	#include <stack>
 // 	#include <vector>
