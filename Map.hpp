@@ -3,6 +3,7 @@
 
 #include "Pair.hpp"
 #include "Vector.hpp"
+#include <functional>
 
 namespace ft
 {
@@ -15,12 +16,13 @@ class map
 
 	typedef Key													key_type;
 	typedef T													mapped_type;
-	typedef pair<Key, T>									value_type;
+	typedef pair<Key, T>										value_type;
 	typedef const Compare 										key_compare;
 	typedef typename vector<value_type>::iterator				iterator;
 	typedef typename vector<value_type>::reverse_iterator		reverse_iterator;
 	typedef unsigned int										size_type;
-	typedef const iterator										const_iterator;
+	typedef typename vector<value_type>::const_iterator			const_iterator;
+	typedef typename vector<value_type>::const_reverse_iterator	const_reverse_iterator;
 	typedef std::allocator<T>									allocator_type;
 
 
@@ -49,7 +51,7 @@ class map
 			_vector = vector<value_type>(alloc);
 			_comp = comp;
 		}
-		map (const map &x)
+		map (const map &x) : _comp(Compare())
 		{
 			iterator begin = x._vector.begin();
 			iterator end = x._vector.end();
@@ -59,17 +61,17 @@ class map
 			_vector.assign(begin, end);
 		}
 		template <class InputIterator>
-		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type &alloc = allocator_type()) : _comp(comp)
+		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type &alloc = allocator_type())
 		{
 			_vector.allocator = alloc;
 			_vector = vector<pair<Key, T> >();
 			_vector.assign(first, last);
+			_comp = comp;
 		}
 		~map()
 		{
 
 		}
-
 
 		//		OPERATORS
 		//___________________________________
@@ -90,7 +92,7 @@ class map
 		{
 			return (_vector.begin());
 		}
-		const iterator begin() const
+		const_iterator begin() const
 		{
 			return (_vector.begin());
 		}
@@ -98,9 +100,25 @@ class map
 		{
 			return (_vector.end());
 		}
-		const iterator end() const
+		const_iterator end() const
 		{
 			return (_vector.end());
+		}
+		reverse_iterator rbegin()
+		{
+			return (_vector.rbegin());
+		}
+		const_reverse_iterator rbegin() const
+		{
+			return (_vector.rbegin());
+		}
+		reverse_iterator rend()
+		{
+			return (_vector.rend());
+		}
+		const_reverse_iterator rend() const
+		{
+			return (_vector.rend());
 		}
 		bool empty() const
 		{
@@ -155,6 +173,27 @@ class map
 			}
 			_vector.insert(insert_pos, val);
 			return (ft::make_pair<iterator, bool>(insert_pos, true));
+		}
+		
+		iterator insert (iterator position, const value_type& val)
+		{
+			iterator dup_key = find(val.first);
+			if (dup_key != _vector.end()) // iterator's different from the end of the vector, this means we found a key the same as the one we want to insert
+				return (dup_key);
+			if (_comp(*position,val) && _comp(val, *(position + 1)))
+				_vector.insert(position, value_type(val));
+			else
+				return (insert<iterator, bool>(val).first);
+		}
+
+		template <class InputIterator>
+		void insert (InputIterator first, InputIterator last)
+		{
+			InputIterator iter = first;
+			while (iter != last)
+			{
+				insert(*iter);
+			}
 		}
 
 	private:
@@ -222,11 +261,11 @@ class map
 		}
 		key_compare key_comp() const
 		{
-			return (key_comp);
+			return (key_compare());
 		}
 		value_compare value_comp() const
 		{
-			return (value_compare());
+			return (value_compare(_comp));
 		}
 		size_type count (const key_type &k)
 		{
@@ -309,34 +348,6 @@ class map
 			return (_vector.get_allocator());
 		}
 };
-	template<bool Cond, class T = void> struct enable_if {};
-	template<class T> struct enable_if<true, T> { typedef T type; };
-
-	template<typename T> struct is_integral_base: std::false_type {};
-
-	template<> struct is_integral_base<bool>						: public std::true_type {};
-	
-	template<> struct is_integral_base<char>						: public std::true_type {};
-	template<> struct is_integral_base<unsigned char>				: public std::true_type {};
-	
-	template<> struct is_integral_base<char16_t>					: public std::true_type {};
-	template<> struct is_integral_base<char32_t>					: public std::true_type {};
-	
-	template<> struct is_integral_base<wchar_t>						: public std::true_type {};
-	template<> struct is_integral_base<unsigned wchar_t>			: public std::true_type {};
-
-	template<> struct is_integral_base<short>						: public std::true_type {};
-	template<> struct is_integral_base<unsigned short>				: public std::true_type {};
-	
-	template<> struct is_integral_base<int>							: public std::true_type {};
-	
-	template<> struct is_integral_base<long>						: public std::true_type {};
-	template<> struct is_integral_base<unsigned long>				: public std::true_type {};
-	
-	template<> struct is_integral_base<long long>					: public std::true_type {};
-	template<> struct is_integral_base<unsigned long long>			: public std::true_type {};
-
-	template<class T> struct is_integral : public is_integral_base<typename std::remove_cv<T>::type > {};
 
 }
 

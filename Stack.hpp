@@ -31,8 +31,8 @@ namespace ft
 			}
 			stack(const vector<T> &cpy)
 			{
-				typename ft::vector<T>::iterator begin = cpy.begin();
-				typename ft::vector<T>::iterator end = cpy.end();
+				typename ft::vector<T>::const_iterator begin = cpy.begin();
+				typename ft::vector<T>::const_iterator end = cpy.end();
 
 				c.assign(begin, end);
 			}
