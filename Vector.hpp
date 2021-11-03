@@ -247,7 +247,7 @@ class vector
 			{
 				std::cout << e.what() << std::endl;
 			}
-			while (i < _size)
+			while (i < rhs._capacity)
 			{
 				buffer[i] = rhs._array[i];
 				i++;
@@ -288,12 +288,12 @@ class vector
 		}
 
 		template <class InputIterator>
-		vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(), typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type*  = nullptr) : _allocator(alloc)
+		vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(), typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type*  = nullptr) : _array(NULL), _capacity(0), _size(0), _allocator(alloc)
 		{
 			assign(first, last);
 		}
 
-		vector (const vector& x)
+		vector (const vector& x) : _array(NULL), _capacity(0), _size(0), _allocator(Alloc())
 		{
 			const_iterator begin = x.begin();
 			const_iterator last = x.end();
@@ -405,11 +405,9 @@ class vector
 		{
 			if (n > static_cast<size_type>(_capacity))
 			{
-				size_type	temp_cap = n * 2;
-
-				if (temp_cap > max_size())
+				if (n > max_size())
 					return ;
-				_alloc_copy(temp_cap);
+				_alloc_copy(n);
 			}	
 		}
 		reference at(size_type n)
@@ -443,7 +441,7 @@ class vector
 			return (_array[_size - 1]);
 		}
 		template<typename InputIterator>
-		void assign(InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type*  = nullptr)
+		void assign(InputIterator first, InputIterator last, typename ft::enable_if<!(ft::is_integral<InputIterator>::value) >::type*  = nullptr)
 		{
 			size_type i;
 
@@ -457,15 +455,14 @@ class vector
 			}
 			if (i > _capacity)
 			{
-				if (_array)
-					_allocator.deallocate(_array, _capacity);
+				_allocator.deallocate(_array, _capacity);
 				_capacity = i * 2;
 				_array = _allocator.allocate(_capacity);
 			}
 			i = 0;
 			while (first != last)
 			{
-				_array[i] = value_type(*first);
+				_array[i++] = value_type(*first);
 				_size++;
 				first++;
 			}
@@ -473,7 +470,6 @@ class vector
 		void assign(size_type n, const value_type &val)
 		{
 			size_type i;
-
 			clear();
 			if (n > static_cast<size_type>(_capacity))
 			{

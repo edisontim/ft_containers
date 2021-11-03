@@ -29,11 +29,11 @@ class map
 	class value_compare : public std::binary_function<value_type, value_type, bool>
 	{
 		public:
-			bool operator()(const value_type& left, const value_type& right) const;
-			value_compare(key_compare pred) : comp(pred)
+			bool operator()(const value_type& left, const value_type& right) const
 			{
-
+				return (comp(left.first, right.first));
 			}
+			value_compare(key_compare pred) : comp(pred) {}
 		protected:
 			key_compare comp;
 	};
@@ -51,13 +51,14 @@ class map
 			_vector = vector<value_type>(alloc);
 			_comp = comp;
 		}
-		map (const map &x) : _comp(Compare())
+		map (const map &x)
 		{
-			iterator begin = x._vector.begin();
-			iterator end = x._vector.end();
+			const_iterator begin = x._vector.begin();
+			const_iterator end = x._vector.end();
 
 			vector<value_type> buff = x._vector;
 			_vector = buff;
+			_comp = Compare();
 			_vector.assign(begin, end);
 		}
 		template <class InputIterator>
@@ -81,9 +82,12 @@ class map
 		}
 		mapped_type& operator[] (const key_type& k)
 		{
-			if (_vector.size() >= _vector.capacity())
+			if (!_vector.size() && !_vector.capacity())
+				_vector.reserve(1);
+			else if (_vector.size() >= _vector.capacity())
 				_vector.reserve(_vector.capacity() * 2);
-			return insert(ft::make_pair(k, mapped_type())).first->second;
+			pair<iterator, bool> a = insert(ft::make_pair(k, mapped_type()));
+			return a.first->second;
 		}
 
 		//		UTILS
@@ -136,7 +140,6 @@ class map
 		iterator find (const key_type& k)
 		{
 			iterator ret = binary_search(k);
-			// std::cout << (*ret).first << std::endl;
 			return (ret);
 		}
 		const iterator find (const key_type &k) const
@@ -150,27 +153,12 @@ class map
 			if (_vector.empty())
 			{
 				_vector.push_back(val);
-				return (ft::make_pair(iterator(&_vector.back()), true));
+				return (ft::make_pair(_vector.begin(), true));
 			}
 			iterator dup_key = find(val.first);
 			if (dup_key != _vector.end()) // iterator's different from the end of the vector, this means we found a key the same as the one we want to insert
-				return(ft::make_pair<iterator, bool>(dup_key, false));
+				return (ft::make_pair<iterator, bool>(dup_key, false));
 			iterator insert_pos = this->insert_pos(val.first);
-			if (insert_pos == _vector.end() && _vector.size() == 1)
-			{
-				iterator buff;
-				if (_comp(val.first, _vector[0].first))
-				{
-					buff = iterator(&_vector[0]);
-					_vector.insert(buff, val);
-				}
-				else
-				{
-					buff = iterator(&_vector.back());
-					_vector.push_back(val);
-				}
-				return (ft::make_pair(buff, true));
-			}
 			_vector.insert(insert_pos, val);
 			return (ft::make_pair<iterator, bool>(insert_pos, true));
 		}
@@ -180,10 +168,10 @@ class map
 			iterator dup_key = find(val.first);
 			if (dup_key != _vector.end()) // iterator's different from the end of the vector, this means we found a key the same as the one we want to insert
 				return (dup_key);
-			if (_comp(*position,val) && _comp(val, *(position + 1)))
-				_vector.insert(position, value_type(val));
+			if (_comp(position->first, val.first) && _comp(val.first, (*(position + 1)).first))
+				return (_vector.insert(position + 1, value_type(val)));
 			else
-				return (insert<iterator, bool>(val).first);
+				return (insert(val).first);
 		}
 
 		template <class InputIterator>
@@ -193,6 +181,7 @@ class map
 			while (iter != last)
 			{
 				insert(*iter);
+				iter++;
 			}
 		}
 
@@ -261,7 +250,7 @@ class map
 		}
 		key_compare key_comp() const
 		{
-			return (key_compare());
+			return (_comp);
 		}
 		value_compare value_comp() const
 		{

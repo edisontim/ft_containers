@@ -22,7 +22,7 @@ class pair
 		pair(void) : first(T1()), second(T2()){}
 		
 		template<class U, class V>
-		pair(const pair<U, V> &cpy) : first(cpy.first), second(cpy.second) {}
+		pair(const pair<U, V> &cpy) : first(T1(cpy.first)), second(T2(cpy.second)) {}
 		
 		pair (const first_type& a, const second_type& b) : first(a), second(b){}
 		
@@ -35,9 +35,8 @@ class pair
 		//___________________________________
 		pair& operator=(const pair &cpy)
 		{
-			this->first = T1(cpy.first);
-			this->second = T2(cpy.second);
-			
+			this->first = cpy.first;
+			this->second = cpy.second;
 			return (*this);
 		}
 		bool operator==(const pair &rhs)
