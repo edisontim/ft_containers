@@ -4,6 +4,7 @@
 #include "Pair.hpp"
 #include "Vector.hpp"
 #include <functional>
+#include "RBT/RBT.hpp"
 
 namespace ft
 {
@@ -11,20 +12,19 @@ template <class Key, class T, class Compare = std::less<Key> >
 class map
 {
 
-	
 	public:
 
 	typedef Key													key_type;
 	typedef T													mapped_type;
 	typedef pair<Key, T>										value_type;
 	typedef const Compare 										key_compare;
-	typedef typename vector<value_type>::iterator				iterator;
-	typedef typename vector<value_type>::reverse_iterator		reverse_iterator;
 	typedef unsigned int										size_type;
-	typedef typename vector<value_type>::const_iterator			const_iterator;
-	typedef typename vector<value_type>::const_reverse_iterator	const_reverse_iterator;
 	typedef std::allocator<T>									allocator_type;
-
+	typedef RBTree<ft::map<Key, T, Compare> >					RBTree;
+	typedef typename RBTree::Node_ptr							iterator;
+	typedef const typename RBTree::Node_ptr						const_iterator;
+	typedef typename ft::reverse_iterator<iterator>				reverse_iterator;
+	typedef typename ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 
 	class value_compare : public std::binary_function<value_type, value_type, bool>
 	{
@@ -39,16 +39,15 @@ class map
 	};
 
 	private:
-		vector<value_type>	_vector;
-		Compare				_comp;
+		RBTree	rbt;
+		Compare								_comp;
 
 	public:
 
 		//		CONSTRUCTORS/DESTRUCTOR
 		//___________________________________
-		map(const key_compare& comp = key_compare(), const allocator_type &alloc = allocator_type())
+		map(const key_compare& comp = key_compare(), const allocator_type &alloc = allocator_type()) : rbt(RBTree())
 		{
-			_vector = vector<value_type>(alloc);
 			_comp = comp;
 		}
 		map (const map &x)

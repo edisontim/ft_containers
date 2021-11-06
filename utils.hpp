@@ -72,7 +72,56 @@ namespace ft
 	template<> struct is_integral_base<long long>					: public std::true_type {};
 	template<> struct is_integral_base<unsigned long long>			: public std::true_type {};
 
-	template<class T> struct is_integral : public is_integral_base<typename std::remove_cv<T>::type > {};
+
+
+	template<> struct is_integral_base<const bool>						: public std::true_type {};
+	
+	template<> struct is_integral_base<const char>						: public std::true_type {};
+	template<> struct is_integral_base<const unsigned char>				: public std::true_type {};
+	
+	template<> struct is_integral_base<const char16_t>					: public std::true_type {};
+	template<> struct is_integral_base<const char32_t>					: public std::true_type {};
+	
+	template<> struct is_integral_base<const wchar_t>						: public std::true_type {};
+	template<> struct is_integral_base<const unsigned wchar_t>			: public std::true_type {};
+
+	template<> struct is_integral_base<const short>						: public std::true_type {};
+	template<> struct is_integral_base<const unsigned short>				: public std::true_type {};
+	
+	template<> struct is_integral_base<const int>							: public std::true_type {};
+	
+	template<> struct is_integral_base<const long>						: public std::true_type {};
+	template<> struct is_integral_base<const unsigned long>				: public std::true_type {};
+	
+	template<> struct is_integral_base<const long long>					: public std::true_type {};
+	template<> struct is_integral_base<const unsigned long long>			: public std::true_type {};
+
+
+
+	template<> struct is_integral_base<volatile bool>						: public std::true_type {};
+	
+	template<> struct is_integral_base<volatile char>						: public std::true_type {};
+	template<> struct is_integral_base<volatile unsigned char>				: public std::true_type {};
+	
+	template<> struct is_integral_base<volatile char16_t>					: public std::true_type {};
+	template<> struct is_integral_base<volatile char32_t>					: public std::true_type {};
+	
+	template<> struct is_integral_base<volatile wchar_t>						: public std::true_type {};
+	template<> struct is_integral_base<volatile unsigned wchar_t>			: public std::true_type {};
+
+	template<> struct is_integral_base<volatile short>						: public std::true_type {};
+	template<> struct is_integral_base<volatile unsigned short>				: public std::true_type {};
+	
+	template<> struct is_integral_base<volatile int>							: public std::true_type {};
+	
+	template<> struct is_integral_base<volatile long>						: public std::true_type {};
+	template<> struct is_integral_base<volatile unsigned long>				: public std::true_type {};
+	
+	template<> struct is_integral_base<volatile long long>					: public std::true_type {};
+	template<> struct is_integral_base<volatile unsigned long long>			: public std::true_type {};
+
+
+	template<class T> struct is_integral : public is_integral_base<T> {};
 
 }
 #endif
