@@ -33,12 +33,14 @@ namespace ft
 			typedef typename Container::key_compare				key_compare;
 			typedef typename Container::allocator_type			allocator_type;
 			typedef typename Container::size_type				size_type;
-		
+
 		private:
-			Node_ptr root;
-			Node_ptr TNULL;
-			key_compare comp;
-			allocator_type allocator;
+			Node_ptr		root;
+			Node_ptr		TNULL;
+			key_compare		comp;
+			allocator_type	allocator;
+			size_type 		size;
+
 
 			void initialize_NULL_node (Node_ptr node, Node_ptr parent)
 			{
@@ -241,7 +243,7 @@ namespace ft
 				}
 			
 				delete z;
-			
+				size--;
 				if (y_original_color == BLACK)
 					fix_delete(x);
 			}
@@ -344,7 +346,8 @@ namespace ft
  
 		
 		public :
-			RBTree(allocator_type alloc = allocator_type()) : allocator(alloc)
+			
+			RBTree(allocator_type alloc = allocator_type()) : allocator(alloc), size(0)
 			{
 				TNULL = new Node;
 				TNULL->color = BLACK;
@@ -458,6 +461,7 @@ namespace ft
 
 				Node_ptr y = nullptr;
 				Node_ptr x = this->root;
+
 				while (x != TNULL)
 				{
 					y = x;
@@ -484,6 +488,7 @@ namespace ft
 
 				if (node->parent->parent == nullptr)
 					return ;
+				size++;
 				fix_insert(node);
 			}
 
@@ -508,6 +513,24 @@ namespace ft
 				return TNULL;
 			}
 
+			size_type get_size(void)
+			{
+				return (size);
+			}
+
+			RBTree copy_tree(void)
+			{
+				RBTree cpy = RBTree();
+				cpy.insert(root->data);
+				Node_ptr iter = minimum(root);
+				while (iter != maximum(root))
+				{
+					cpy.insert(iter->data);
+					iter = successor(iter);
+				}
+				cpy.insert(maximum(root)->data);
+				return (cpy);
+			}
 	};
 }
 

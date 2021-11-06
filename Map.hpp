@@ -18,13 +18,13 @@ class map
 	typedef T													mapped_type;
 	typedef pair<Key, T>										value_type;
 	typedef const Compare 										key_compare;
+	typedef std::ptrdiff_t										difference_type;
 	typedef unsigned int										size_type;
 	typedef std::allocator<T>									allocator_type;
 	typedef RBTree<ft::map<Key, T, Compare> >					RBTree;
-	typedef typename RBTree::Node_ptr							iterator;
-	typedef const typename RBTree::Node_ptr						const_iterator;
-	typedef typename ft::reverse_iterator<iterator>				reverse_iterator;
-	typedef typename ft::reverse_iterator<const_iterator>		const_reverse_iterator;
+	typedef RBTree::Node_ptr									pointer;
+	typedef RBTree::Node&										reference;
+
 
 	class value_compare : public std::binary_function<value_type, value_type, bool>
 	{
@@ -39,27 +39,24 @@ class map
 	};
 
 	private:
-		RBTree	rbt;
+		RBTree								rbt;
 		Compare								_comp;
+		allocator_type						_alloc;
 
 	public:
 
 		//		CONSTRUCTORS/DESTRUCTOR
 		//___________________________________
-		map(const key_compare& comp = key_compare(), const allocator_type &alloc = allocator_type()) : rbt(RBTree())
+		map(const key_compare& comp = key_compare(), const allocator_type &alloc = allocator_type()) : rbt(RBTree()), _alloc(alloc)
 		{
 			_comp = comp;
 		}
-		map (const map &x)
-		{
-			const_iterator begin = x._vector.begin();
-			const_iterator end = x._vector.end();
 
-			vector<value_type> buff = x._vector;
-			_vector = buff;
-			_comp = Compare();
-			_vector.assign(begin, end);
+		map (const map &x) : _comp(x._comp), _alloc(x._alloc)
+		{
+			rbt = x.copy_tree();
 		}
+
 		template <class InputIterator>
 		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type &alloc = allocator_type())
 		{
@@ -68,17 +65,26 @@ class map
 			_vector.assign(first, last);
 			_comp = comp;
 		}
+
 		~map()
+		{
+			
+		}
+
+		class iterator : public iterator<ft::random_access_iterator_tag, T, difference_type, pointer, >
 		{
 
 		}
-
+		
+		typedef typename ft::reverse_iterator<iterator>				reverse_iterator;
+		typedef typename ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 		//		OPERATORS
 		//___________________________________
 		map &operator=(const map &rhs)
 		{
 			_vector = rhs._vector;
 		}
+
 		mapped_type& operator[] (const key_type& k)
 		{
 			if (!_vector.size() && !_vector.capacity())
@@ -95,42 +101,52 @@ class map
 		{
 			return (_vector.begin());
 		}
+
 		const_iterator begin() const
 		{
 			return (_vector.begin());
 		}
+
 		iterator end()
 		{
 			return (_vector.end());
 		}
+
 		const_iterator end() const
 		{
 			return (_vector.end());
 		}
+
 		reverse_iterator rbegin()
 		{
 			return (_vector.rbegin());
 		}
+
 		const_reverse_iterator rbegin() const
 		{
 			return (_vector.rbegin());
 		}
+
 		reverse_iterator rend()
 		{
 			return (_vector.rend());
 		}
+
 		const_reverse_iterator rend() const
 		{
 			return (_vector.rend());
 		}
+
 		bool empty() const
 		{
 			return (_vector.empty());
 		}
+
 		size_type size() const
 		{
 			return (_vector.size());
 		}
+
 		size_type max_size() const
 		{
 			return (_vector.max_size());
@@ -141,6 +157,7 @@ class map
 			iterator ret = binary_search(k);
 			return (ret);
 		}
+
 		const iterator find (const key_type &k) const
 		{
 			iterator ret = binary_search(k);
@@ -202,6 +219,7 @@ class map
 			}
 			return (_vector.end());
 		}
+
 		iterator insert_pos(const key_type &key)
 		{
 			int start = 0;
@@ -224,6 +242,7 @@ class map
 		{
 			_vector.erase(position);
 		}
+
 		size_type erase (const key_type& k)
 		{
 			iterator to_erase = find(k);
@@ -235,26 +254,32 @@ class map
 				return (1);
 			}
 		}
+
 		void erase (iterator first, iterator last)
 		{
 			_vector.erase(first, last);
 		}
+
 		void swap (map& x)
 		{
 			_vector.swap(x._vector);
 		}
+
 		void clear()
 		{
 			_vector.clear();
 		}
+
 		key_compare key_comp() const
 		{
 			return (_comp);
 		}
+
 		value_compare value_comp() const
 		{
 			return (value_compare(_comp));
 		}
+
 		size_type count (const key_type &k)
 		{
 			if (this->find(k) != end())
@@ -262,6 +287,7 @@ class map
 			else
 				return (0);
 		}
+
 		iterator lower_bound (const key_type& k)
 		{
 			unsigned int i;
@@ -275,6 +301,7 @@ class map
 			}
 			return (end());
 		}
+
 		const_iterator lower_bound (const key_type& k) const
 		{
 			unsigned int i;
@@ -288,6 +315,7 @@ class map
 			}
 			return (end());
 		}
+
 		iterator upper_bound (const key_type& k)
 		{
 			unsigned int i;
@@ -302,6 +330,7 @@ class map
 			}
 			return (end());
 		}
+
 		const_iterator upper_bound (const key_type& k) const
 		{
 			unsigned int i;
@@ -315,6 +344,7 @@ class map
 			}
 			return (end());
 		}
+
 		pair<const_iterator,const_iterator>	equal_range (const key_type& k) const
 		{
 			iterator to_find = find(k);
@@ -323,6 +353,7 @@ class map
 			else
 				return (ft::make_pair(find(k), find(k)));
 		}
+
 		pair<iterator,iterator>				equal_range (const key_type& k)
 		{
 			iterator to_find = find(k);
@@ -331,6 +362,7 @@ class map
 			else
 				return (ft::make_pair(upper_bound(k), upper_bound(k)));
 		}
+
 		allocator_type get_allocator() const
 		{
 			return (_vector.get_allocator());
