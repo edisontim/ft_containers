@@ -19,7 +19,8 @@ namespace ft
 		COLOR		color;
 
 		Node() : data(value_type()) {}
-		Node (value_type v) : data(v) {}
+		Node (value_type v) : data(value_type(v)), parent(nullptr), left(nullptr), right(nullptr), color(BLACK) {}
+		~Node() {}
 	};
 
 	template<typename Container>
@@ -84,7 +85,7 @@ namespace ft
 			Node_ptr search_tree_helper(Node_ptr node, key_type key)
 			{
 				if (node == TNULL || (!comp(key, node->data.first) && !comp(node->data.first, key)))
-					return (node);
+					return (TNULL);
 				if (comp(key, node->data.first))
 					return search_tree_helper(node->left, key);
 				return search_tree_helper(node->right, key);
@@ -210,7 +211,8 @@ namespace ft
 					std::cout << "Couldn't find the key inside the binary tree" << std::endl;
 					return ;
 				}
-
+				
+				size--;
 				y = z;
 				COLOR y_original_color = y->color;
 				if (z->left == TNULL)
@@ -243,7 +245,6 @@ namespace ft
 				}
 			
 				delete z;
-				size--;
 				if (y_original_color == BLACK)
 					fix_delete(x);
 			}
@@ -353,7 +354,47 @@ namespace ft
 				TNULL->color = BLACK;
 				TNULL->left = nullptr;
 				TNULL->right = nullptr;
+				TNULL->parent = nullptr;
 				root = TNULL;
+			}
+			
+			RBTree(RBTree const &cpy) : comp(cpy.comp)
+			{
+				TNULL = new Node;
+				TNULL->color = BLACK;
+				TNULL->left = nullptr;
+				TNULL->right = nullptr;
+				TNULL->parent = nullptr;
+				root = copy_tree_root();
+				allocator = cpy.allocator;
+				size = cpy.size;
+			}
+
+			RBTree const &operator=(RBTree const &cpy)
+			{
+				TNULL = new Node;
+				TNULL->color = BLACK;
+				TNULL->left = nullptr;
+				TNULL->right = nullptr;
+				TNULL->parent = nullptr;
+				root = copy_tree_root();
+				allocator = cpy.allocator;
+				size = cpy.size;
+				return (*this);
+			}
+
+			~RBTree()
+			{
+				Node_ptr iter = maximum(root);
+				Node_ptr buff = iter;
+				while (size > 1)
+				{
+					buff = iter;
+					iter = predecessor(iter);
+					delete_node(buff->data.first);
+				}
+				delete root;
+				size--;
 			}
 
 			void pre_order(void)
@@ -371,26 +412,52 @@ namespace ft
 				post_order_helper(this->root);
 			}
 
-			Node_ptr search_tree(key_type k)
+			Node_ptr search_tree(const key_type &k)
 			{
 				return search_tree_helper(this->root, k);
 			}
 
-			Node_ptr minimum(Node_ptr node)
+			Node_ptr minimum(Node_ptr const &node)
 			{
-				while (node->left != TNULL)
-					node = node->left;
-				return (node);
+				if (node == TNULL || node == nullptr)
+					return (node);
+				Node_ptr iter = node;
+				while (iter->left != TNULL)
+					iter = iter->left;
+				return (iter);
+			}
+			const Node_ptr minimum(Node_ptr const &node) const
+			{
+				if (node == TNULL || node == nullptr)
+					return (node);
+				Node_ptr iter = node;
+				while (iter->left != TNULL)
+					iter = iter->left;
+				return (iter);
 			}
 
 			Node_ptr maximum(Node_ptr node)
 			{
-				while (node->right != TNULL)
-					node = node->right;
-				return (node);
+				if (node == TNULL || node == nullptr)
+					return (node);
+				Node_ptr iter = node;
+				std::cout << iter->data.first << std::endl;
+				while (iter->right != TNULL)
+					iter = iter->right;
+				return (iter);
+			}
+			
+			const Node_ptr maximum(Node_ptr const &node) const
+			{
+				if (node == TNULL || node == nullptr)
+					return (node);
+				Node_ptr iter = node;
+				while (iter->right != TNULL)
+					iter = iter->right;
+				return (iter);
 			}
 
-			Node_ptr predecessor(Node_ptr x)
+			Node_ptr predecessor(Node_ptr &x)
 			{
 				if (x->left != TNULL)
 					return maximum(x->left);
@@ -403,8 +470,10 @@ namespace ft
 				return (y);
 			}
 
-			Node_ptr successor(Node_ptr x)
+			Node_ptr successor(Node_ptr &x)
 			{
+				if (x == TNULL)
+					return (TNULL);
 				if (x->right != TNULL)
 					return minimum(x->right);
 				Node_ptr y = x->parent;
@@ -480,6 +549,7 @@ namespace ft
 				else
 					y->right = node;
 
+				size++;
 				if (node->parent == nullptr)
 				{
 					node->color = BLACK;
@@ -488,11 +558,15 @@ namespace ft
 
 				if (node->parent->parent == nullptr)
 					return ;
-				size++;
 				fix_insert(node);
 			}
 
 			Node_ptr get_root(void)
+			{
+				return (this->root);
+			}
+
+			const Node_ptr get_root(void) const
 			{
 				return (this->root);
 			}
@@ -509,6 +583,11 @@ namespace ft
 			}
 
 			Node_ptr get_nullnode(void)
+			{
+				return TNULL;
+			}
+			
+			const Node_ptr get_nullnode(void) const
 			{
 				return TNULL;
 			}
@@ -530,6 +609,20 @@ namespace ft
 				}
 				cpy.insert(maximum(root)->data);
 				return (cpy);
+			}
+			
+			Node_ptr copy_tree_root(void)
+			{
+				RBTree cpy = RBTree();
+				cpy.insert(root->data);
+				Node_ptr iter = minimum(root);
+				while (iter != maximum(root))
+				{
+					cpy.insert(iter->data);
+					iter = successor(iter);
+				}
+				cpy.insert(maximum(root)->data);
+				return (cpy.root);
 			}
 	};
 }

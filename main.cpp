@@ -74,10 +74,10 @@ void reverse_output_v(ft::vector<int> &test)
 	}
 }
 
-void output_my_map(ft::map<int, std::string> &a)
+void output_my_map(ft::map<const int, std::string> &a)
 {	
-	ft::map<int, std::string>::iterator begin = a.begin();
-	ft::map<int, std::string>::iterator end = a.end();
+	ft::map<const int, std::string>::iterator begin = a.begin();
+	ft::map<const int, std::string>::iterator end = a.end();
 	
 	std::cout << "Map is :" << std::endl;
 	while (begin != end)
@@ -240,12 +240,12 @@ int main()
 
 	std::cout << "________________map________________" << std::endl;
 
-	ft::map<int, std::string> map_test;
+	ft::map<const int, std::string> map_test;
 
 	std::string stringa = "Hello";
 
 	map_test.insert(ft::make_pair(1, stringa));
-	map_test.insert(ft::make_pair(10, std::string("lo")));
+	map_test.insert(ft::make_pair(10, stringa));
 	map_test.insert(ft::make_pair(8, std::string("LOL")));
 	map_test.insert(ft::make_pair(2, std::string("aisufdha")));
 	map_test.insert(ft::make_pair(4, std::string("1002391093")));
@@ -278,7 +278,7 @@ int main()
 	std::cout << "map_test[-10] : " << map_test[-10] << std::endl;
 	output_my_map(map_test);
 	std::cout << "map_test.count(10) : " << map_test.count(10) << std::endl;
-	ft::pair< ft::map<int, std::string>::iterator, ft::map<int, std::string>::iterator > pair = map_test.equal_range(0);
+	ft::pair< ft::map<const int, std::string>::iterator, ft::map<const int, std::string>::iterator > pair = map_test.equal_range(0);
 	std::cout << "map_test.equal_range(0) : " << (*pair.first).first << std::endl;
 
 
