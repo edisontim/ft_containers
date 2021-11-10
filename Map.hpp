@@ -55,7 +55,7 @@ class map
 
 		map (const map &x) : _comp(x._comp), _alloc(x._alloc)
 		{
-			rbt = x.copy_tree();
+			rbt = x.rbt;
 		}
 
 		template <class InputIterator>
@@ -65,7 +65,7 @@ class map
 			
 			while (first != last)
 			{
-				rbt.insert(first.p);
+				rbt.insert(first.p->data);
 				first++;
 			}
 			_comp = comp;
@@ -79,15 +79,16 @@ class map
 		{
 			public :
 				Node_ptr	p;
-				RBTree		&rbt;
+				RBTree		*rbt;
 
-				iterator() : p(NULL) {}
+				iterator() : p(NULL), rbt(NULL) {}
 				iterator(iterator const &x) : p(x.p), rbt(x.rbt) {}
-				iterator(Node_ptr const &x, RBTree &cpy) : p(x), rbt(cpy) {}
+				iterator(Node_ptr const &x, RBTree *cpy) : p(x), rbt(cpy) {}
 
 				iterator &operator=(const iterator &ri)
 				{
 					p = ri.p;
+					rbt = ri.rbt;
 					return (*this);
 				}
 
@@ -103,45 +104,29 @@ class map
 
 				iterator &operator++()
 				{
-					if (rbt.successor(p) == p)
-					{
-						++p;
-						return (*this);
-					}
-					else
-					{
-						p = rbt.successor(p);
-						return (*this);
-					}
+					p = rbt->successor(p);
+					return (*this);
 				}
 
 				iterator operator++(int blank)
 				{
 					(void)blank;
-					iterator ri(*this);
-					++*this;
+					iterator ri(p, rbt);
+					this->operator++();
 					return (ri);
 				}
 
 				iterator &operator--()
 				{
-					if (rbt.predecessor(p) == p)
-					{
-						++p;
-						return (*this);
-					}
-					else
-					{
-						p = rbt.predecessor(p);
-						return (*this);
-					}
+					p = rbt->predecessor(p);
+					return (*this);
 				}
 				
 				iterator operator--(int blank)
 				{
 					(void)blank;
-					iterator ri(*this);
-					--*this;
+					iterator ri(p, rbt);
+					this->operator--();
 					return (ri);
 				}
 		};
@@ -187,14 +172,14 @@ class map
 
 				const_iterator &operator++()
 				{
-					if (rbt.successor(p) == p)
+					if (rbt->successor(p) == p)
 					{
 						++p;
 						return (*this);
 					}
 					else
 					{
-						p = rbt.successor(p);
+						p = rbt->successor(p);
 						return (*this);
 					}
 				}
@@ -209,14 +194,14 @@ class map
 
 				const_iterator &operator--()
 				{
-					if (rbt.predecessor(p) == p)
+					if (rbt->predecessor(p) == p)
 					{
 						++p;
 						return (*this);
 					}
 					else
 					{
-						p = rbt.predecessor(p);
+						p = rbt->predecessor(p);
 						return (*this);
 					}
 				}
@@ -247,16 +232,18 @@ class map
 		//___________________________________
 		map &operator=(const map &rhs)
 		{
-			if (*this != rhs)
-			{
-				rbt = rhs.copy_tree();
-				_alloc = rhs._alloc;
-				_comp = rhs.comp;
-			}
+			rbt = rhs.rbt;
+			_alloc = rhs._alloc;
+			_comp = rhs._comp;
+			return (*this);
 		}
 
 		mapped_type& operator[] (const key_type& k)
 		{
+			Node_ptr found = rbt.search_tree(k);
+			if (found != rbt.get_nullnode())
+				return (found->data.second);
+			rbt.insert(pair<key_type, mapped_type>(k, mapped_type()));
 			return (rbt.search_tree(k)->data.second);
 		}
 
@@ -264,47 +251,51 @@ class map
 		//___________________________________
 		iterator begin()
 		{
-			return (iterator(rbt.minimum(rbt.get_root()), rbt));
+			return (iterator(rbt.minimum(rbt.get_root()), &rbt));
 		}
 
 		const_iterator begin() const
 		{
-			return (const_iterator(rbt.minimum(rbt.get_root()), rbt));
+			return (const_iterator(rbt.minimum(rbt.get_root()), &rbt));
 		}
 
 		iterator end()
 		{
-			return (iterator(rbt.maximum(rbt.get_root()) + 1, rbt));
+			if (empty())
+				return (begin());
+			return (iterator(rbt.maximum(rbt.get_root()) + 1, &rbt));
 		}
 
 		const_iterator end() const
 		{
-			return (const_iterator(rbt.maximum(rbt.get_root()) + 1, rbt));
+			if (empty())
+				return (begin());
+			return (const_iterator(rbt.maximum(rbt.get_root()) + 1, &rbt));
 		}
 
 		reverse_iterator rbegin()
 		{
-			return (reverse_iterator(rbt.maximum(rbt.get_root()), rbt));
+			return (reverse_iterator(iterator(rbt.maximum(rbt.get_root()) + 1, &rbt)));
 		}
 
 		const_reverse_iterator rbegin() const
 		{
-			return (const_reverse_iterator(rbt.maximum(rbt.get_root()), rbt));
+			return (const_reverse_iterator(iterator(rbt.maximum(rbt.get_root()) + 1, &rbt)));
 		}
 
 		reverse_iterator rend()
 		{
-			return (const_reverse_iterator(rbt.minimum(rbt.get_root()) - 1, rbt));
+			return (reverse_iterator(iterator(rbt.minimum(rbt.get_root()), &rbt)));
 		}
 
 		const_reverse_iterator rend() const
 		{
-			return (const_reverse_iterator(rbt.minimum(rbt.get_root()) - 1, rbt));
+			return (const_reverse_iterator(iterator(rbt.minimum(rbt.get_root()), &rbt)));
 		}
 
 		bool empty() const
 		{
-			return (rbt.get_size());
+			return (!rbt.get_size());
 		}
 
 		size_type size()
@@ -319,31 +310,31 @@ class map
 
 		iterator find (const key_type& k)
 		{
-			return (iterator(rbt.search_tree(k), rbt));
+			return (iterator(rbt.search_tree(k), &rbt));
 		}
 
 		const_iterator find (const key_type &k) const
 		{
-			return (const_iterator(rbt.search_tree(k), rbt));
+			return (const_iterator(rbt.search_tree(k), &rbt));
 		}
 
 		pair<iterator,bool> insert(const value_type& val)
 		{
 			Node_ptr found = rbt.search_tree(val.first);
 			if (found != rbt.get_nullnode())
-				return (ft::make_pair<iterator, bool>(iterator(found, rbt), false));
+				return (ft::make_pair<iterator, bool>(iterator(found, &rbt), false));
 			rbt.insert(val);
-			return (ft::pair<iterator, bool>(iterator(found, rbt), true));
+			return (ft::pair<iterator, bool>(iterator(found, &rbt), true));
 		}
 		
 		iterator insert (iterator position, const value_type& val)
 		{
 			(void)position;
-			iterator found(rbt.search_tree(val.first), rbt);
-			if (found != iterator(rbt.get_nullnode(), rbt))
-				return (ft::make_pair<iterator, bool>(found, false));
+			iterator found(rbt.search_tree(val.first), &rbt);
+			if (found != iterator(rbt.get_nullnode(), &rbt))
+				return (found);
 			rbt.insert(val);
-			return (ft::make_pair(iterator(rbt.search_tree(val.first), rbt), true));
+			return (iterator(rbt.search_tree(val.first), &rbt));
 		}
 
 		template <class InputIterator>
@@ -351,7 +342,7 @@ class map
 		{
 			while (first != last)
 			{
-				insert(*first);
+				rbt.insert(*first);
 				first++;
 			}
 		}
@@ -365,14 +356,23 @@ class map
 
 		size_type erase (const key_type& k)
 		{
-			rbt.delete_node(k);
+			if (rbt.search_tree(k) != rbt.get_nullnode())
+			{
+				rbt.delete_node(k);
+				return (1);
+			}
+			return (0);
 		}
 
 		void erase (iterator first, iterator last)
 		{
+			iterator temp = first;
+			iterator other_temp;
 			while (first != last)
 			{
-				erase(first);
+				temp = first;
+				first++;
+				erase(temp);
 			}
 		}
 
@@ -393,7 +393,7 @@ class map
 
 		void clear()
 		{
-			rbt.~RBTree();
+			rbt.set_root(rbt.clear(rbt.get_root()));
 		}
 
 		key_compare key_comp() const
@@ -408,76 +408,54 @@ class map
 
 		size_type count (const key_type &k)
 		{
-			iterator found(rbt.search_tree(k), rbt);
-			if (found != iterator(rbt.get_nullnode(), rbt))
+			iterator found(rbt.search_tree(k), &rbt);
+			if (found != iterator(rbt.get_nullnode(), &rbt))
 				return (1);
 			return (0);
 		}
 
 		iterator lower_bound (const key_type& k)
 		{
-			unsigned int i;
+			iterator   it = this->begin();
+			iterator   ite = this->end();
 
-			i = 0;
-			Node_ptr iter = rbt.minimum(rbt.get_root());
-			while (i < size())
-			{
-				if (!_comp(iter->data.first, k))
-					return (iterator(iter, rbt));
-				i++;
-				iter = rbt.successor(iter);
-			}
-			return (end());
+			while (it != ite && this->_comp(it->first, k))   // while current key < k
+				++it;
+			return (it);
 		}
 
 		const_iterator lower_bound (const key_type& k) const
 		{
-			unsigned int i;
+			const_iterator   it = this->begin();
+			const_iterator   ite = this->end();
 
-			i = 0;
-			Node_ptr iter = rbt.minimum(rbt.get_root());
-			while (i < size())
-			{
-				if (!_comp(iter->data.first, k))
-					return (const_iterator(iter, rbt));
-				i++;
-				iter = rbt.successor(iter);
-			}
-			return (end());
+			while (it != ite && this->_comp(it->first, k))   // while current key < k
+				++it;
+			return (it);
 		}
 
 		iterator upper_bound (const key_type& k)
 		{
-			unsigned int i;
+			iterator   it = this->begin();
+			iterator   ite = this->end();
 
-			i = 0;
-
-			Node_ptr iter = rbt.minimum(rbt.get_root());
-			while (i < size())
-			{
-				if (_comp(iter->data.first, k))
-					return (iterator(iter, rbt));
-				i++;
-				iter = rbt.successor(iter);
-			}
-			return (end());
+			while (it != ite &&
+				(this->_comp(it->first, k) ||
+				(!_comp(it->first, k) && !_comp(k, it->first))))
+				++it;
+			return (it);
 		}
 
 		const_iterator upper_bound (const key_type& k) const
 		{
-			unsigned int i;
+			const_iterator   it = this->begin();
+			const_iterator   ite = this->end();
 
-			i = 0;
-
-			Node_ptr iter = rbt.minimum(rbt.get_root());
-			while (i < size())
-			{
-				if (_comp(iter->data.first, k))
-					return (const_iterator(iter, rbt));
-				i++;
-				iter = rbt.successor(iter);
-			}
-			return (end());
+			while (it != ite &&
+				(this->_comp(it->first, k) ||
+				(!_comp(it->first, k) && !_comp(k, it->first))))
+				++it;
+			return (it);
 		}
 
 		pair<const_iterator,const_iterator>	equal_range (const key_type& k) const

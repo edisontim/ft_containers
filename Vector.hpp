@@ -36,7 +36,7 @@ class vector
 		typedef T const *								const_pointer;
 		typedef T&										reference;
 		typedef T const &								const_reference;
-		typedef unsigned int							size_type;
+		typedef size_t									size_type;
 		typedef Alloc									allocator_type;
 		typedef std::ptrdiff_t							difference_type;
 		typedef T*										iterator;
@@ -229,8 +229,9 @@ class vector
 		// capacity is unsigned int, so max number of objects is UINT_MAX
 		size_type max_size() const
 		{
-			return (std::numeric_limits<difference_type>::max());
+			return (_allocator.max_size());
 		}
+
 		void resize(size_type n, value_type val = value_type())
 		{
 			if (n < _size)

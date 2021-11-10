@@ -18,8 +18,8 @@ namespace ft
 		Node		*right;
 		COLOR		color;
 
-		Node() : data(value_type()) {}
-		Node (value_type v) : data(value_type(v)), parent(nullptr), left(nullptr), right(nullptr), color(BLACK) {}
+		Node() : parent(nullptr), left(nullptr), right(nullptr), color(BLACK) {}
+		Node (value_type v) : data(v), parent(nullptr), left(nullptr), right(nullptr), color(BLACK) {}
 		~Node() {}
 	};
 
@@ -29,6 +29,7 @@ namespace ft
 		public :
 			typedef typename Container::value_type				value_type;
 			typedef typename Container::key_type				key_type;
+			typedef typename Container::mapped_type				mapped_type;
 			typedef Node<value_type>							Node;
 			typedef Node*										Node_ptr;
 			typedef typename Container::key_compare				key_compare;
@@ -36,11 +37,11 @@ namespace ft
 			typedef typename Container::size_type				size_type;
 
 		private:
-			Node_ptr		root;
-			Node_ptr		TNULL;
-			key_compare		comp;
-			allocator_type	allocator;
-			size_type 		size;
+			Node_ptr				root;
+			Node_ptr				TNULL;
+			key_compare				comp;
+			std::allocator<Node>	allocator;
+			size_type 				size;
 
 
 			void initialize_NULL_node (Node_ptr node, Node_ptr parent)
@@ -85,7 +86,7 @@ namespace ft
 			Node_ptr search_tree_helper(Node_ptr node, key_type key)
 			{
 				if (node == TNULL || (!comp(key, node->data.first) && !comp(node->data.first, key)))
-					return (TNULL);
+					return (node);
 				if (comp(key, node->data.first))
 					return search_tree_helper(node->left, key);
 				return search_tree_helper(node->right, key);
@@ -244,7 +245,8 @@ namespace ft
 					y->color = z->color;
 				}
 			
-				delete z;
+				allocator.destroy(z);
+				allocator.deallocate(z, 1);
 				if (y_original_color == BLACK)
 					fix_delete(x);
 			}
@@ -348,53 +350,74 @@ namespace ft
 		
 		public :
 			
-			RBTree(allocator_type alloc = allocator_type()) : allocator(alloc), size(0)
+			RBTree(allocator_type alloc = allocator_type()) : allocator(alloc)
 			{
-				TNULL = new Node;
-				TNULL->color = BLACK;
+				TNULL = allocator.allocate(1);
+				TNULL->parent = nullptr;
 				TNULL->left = nullptr;
 				TNULL->right = nullptr;
-				TNULL->parent = nullptr;
+				TNULL->color = BLACK;
 				root = TNULL;
+				size = 0;
 			}
 			
 			RBTree(RBTree const &cpy) : comp(cpy.comp)
 			{
-				TNULL = new Node;
-				TNULL->color = BLACK;
+				TNULL = allocator.allocate(1);
+				TNULL->parent = nullptr;
 				TNULL->left = nullptr;
 				TNULL->right = nullptr;
-				TNULL->parent = nullptr;
-				root = copy_tree_root();
+				TNULL->color = BLACK;
+				root = TNULL;
 				allocator = cpy.allocator;
-				size = cpy.size;
+				*this = cpy;
 			}
 
-			RBTree const &operator=(RBTree const &cpy)
+			void copy_tree_helper(Node_ptr node, RBTree const &rbt)
 			{
-				TNULL = new Node;
-				TNULL->color = BLACK;
-				TNULL->left = nullptr;
-				TNULL->right = nullptr;
-				TNULL->parent = nullptr;
-				root = copy_tree_root();
+				if (node == rbt.TNULL)
+					return ;
+				copy_tree_helper(node->left, rbt);
+				copy_tree_helper(node->right, rbt);
+				if (node != rbt.TNULL)
+					this->insert(ft::make_pair<key_type, mapped_type>(node->data.first, node->data.second));
+			}
+
+			RBTree &operator=(RBTree const &cpy)
+			{
+				root = clear(root);
+				copy_tree_helper(cpy.root, cpy);
 				allocator = cpy.allocator;
-				size = cpy.size;
 				return (*this);
+			}
+
+			Node_ptr clear(Node_ptr t)
+			{
+				return (clear_helper(t));
 			}
 
 			~RBTree()
 			{
-				Node_ptr iter = maximum(root);
-				Node_ptr buff = iter;
-				while (size > 1)
+				clear(root);
+			}
+
+			void set_root(Node_ptr t)
+			{
+				root = t;
+			}
+
+			Node_ptr clear_helper(Node_ptr node)
+			{
+				if (node == TNULL)
 				{
-					buff = iter;
-					iter = predecessor(iter);
-					delete_node(buff->data.first);
+					this->size = 0;
+					return TNULL;
 				}
-				delete root;
-				size--;
+				clear_helper(node->left);
+				clear_helper(node->right);
+				allocator.destroy(node);
+				allocator.deallocate(node, 1);
+				return (TNULL);
 			}
 
 			void pre_order(void)
@@ -417,48 +440,30 @@ namespace ft
 				return search_tree_helper(this->root, k);
 			}
 
-			Node_ptr minimum(Node_ptr const &node)
+			Node_ptr minimum(Node_ptr node)
 			{
-				if (node == TNULL || node == nullptr)
+				if (node == TNULL)
 					return (node);
-				Node_ptr iter = node;
-				while (iter->left != TNULL)
-					iter = iter->left;
-				return (iter);
-			}
-			const Node_ptr minimum(Node_ptr const &node) const
-			{
-				if (node == TNULL || node == nullptr)
-					return (node);
-				Node_ptr iter = node;
-				while (iter->left != TNULL)
-					iter = iter->left;
-				return (iter);
+				while (node->left != TNULL)
+					node = node->left;
+				return (node);
 			}
 
 			Node_ptr maximum(Node_ptr node)
 			{
 				if (node == TNULL || node == nullptr)
 					return (node);
-				Node_ptr iter = node;
-				std::cout << iter->data.first << std::endl;
-				while (iter->right != TNULL)
-					iter = iter->right;
-				return (iter);
-			}
-			
-			const Node_ptr maximum(Node_ptr const &node) const
-			{
-				if (node == TNULL || node == nullptr)
-					return (node);
-				Node_ptr iter = node;
-				while (iter->right != TNULL)
-					iter = iter->right;
-				return (iter);
+				while (node->right != TNULL)
+					node = node->right;
+				return (node);
 			}
 
-			Node_ptr predecessor(Node_ptr &x)
+			Node_ptr predecessor(Node_ptr x)
 			{
+				if (x == maximum(root) + 1)
+					return maximum(root);
+				if (x == minimum(root))
+					return (minimum(root) - 1);
 				if (x->left != TNULL)
 					return maximum(x->left);
 				Node_ptr y = x->parent;
@@ -470,14 +475,35 @@ namespace ft
 				return (y);
 			}
 
-			Node_ptr successor(Node_ptr &x)
+			Node_ptr successor(Node_ptr x)
 			{
+				if (x == maximum(root))
+					return (x + 1);
+				if (x == minimum(root) - 1)
+					return minimum(root);
+				if (x->right != TNULL)
+					return minimum(x->right);
+				Node_ptr y = x->parent;
+				while (y != TNULL && x == y->right)
+				{
+					x = y;
+					y = y->parent;
+				}
+				return (y);
+			}
+
+			const Node_ptr successor(Node_ptr x) const
+			{
+				if (x == maximum(root))
+					return (x + 1);
+				if (x == minimum(root) - 1)
+					return minimum(root);
 				if (x == TNULL)
 					return (TNULL);
 				if (x->right != TNULL)
 					return minimum(x->right);
 				Node_ptr y = x->parent;
-				while (y != get_root() && y != TNULL && x == y->right)
+				while (y != TNULL && x == y->right)
 				{
 					x = y;
 					y = y->parent;
@@ -522,7 +548,8 @@ namespace ft
 			//Insert in appropriate position then fix the tree
 			void insert(value_type key)
 			{
-				Node_ptr node = new Node(key);
+				Node_ptr node = allocator.allocate(1);
+				allocator.construct(node, key);
 				node->parent = nullptr;
 				node->left = TNULL;
 				node->right = TNULL;
@@ -587,42 +614,14 @@ namespace ft
 				return TNULL;
 			}
 			
-			const Node_ptr get_nullnode(void) const
-			{
-				return TNULL;
-			}
 
 			size_type get_size(void)
 			{
 				return (size);
 			}
-
-			RBTree copy_tree(void)
+			size_type get_size(void) const
 			{
-				RBTree cpy = RBTree();
-				cpy.insert(root->data);
-				Node_ptr iter = minimum(root);
-				while (iter != maximum(root))
-				{
-					cpy.insert(iter->data);
-					iter = successor(iter);
-				}
-				cpy.insert(maximum(root)->data);
-				return (cpy);
-			}
-			
-			Node_ptr copy_tree_root(void)
-			{
-				RBTree cpy = RBTree();
-				cpy.insert(root->data);
-				Node_ptr iter = minimum(root);
-				while (iter != maximum(root))
-				{
-					cpy.insert(iter->data);
-					iter = successor(iter);
-				}
-				cpy.insert(maximum(root)->data);
-				return (cpy.root);
+				return (size);
 			}
 	};
 }

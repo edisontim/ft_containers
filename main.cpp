@@ -83,7 +83,7 @@ void output_my_map(ft::map<const int, std::string> &a)
 	while (begin != end)
 	{
 		std::cout <<  "keys :" << "|" << ((*begin).first) << "|"  << "		values : |" << ((*begin).second) << "|" << std::endl;
-		begin++;
+		++begin;
 	}
 }
 
@@ -364,7 +364,7 @@ int main()
 	
 	struct timeval time;
 	gettimeofday(&time, NULL); // Start Time
-	long totalTime = (time.tv_sec * 1000000) + (time.tv_usec);
+	unsigned long long totalTime = (time.tv_sec * 1000) + (time.tv_usec/1000);
 
 	i = 0;
 	ft::vector<int> a;
@@ -373,7 +373,7 @@ int main()
 
 	gettimeofday(&time, NULL);  //END-TIME
 
-	totalTime = ((time.tv_sec * 1000000) + (time.tv_usec) - totalTime);
+	totalTime = ((time.tv_sec * 1000) + (time.tv_usec/1000) - totalTime);
 
 	std::cout << "Execution time for my vector is " << totalTime << std::endl;
 
@@ -384,7 +384,7 @@ int main()
 	
 	struct timeval time1;
 	gettimeofday(&time1, NULL); // Start Time
-	long totalTime1 = (time1.tv_sec * 1000000) + (time1.tv_usec);
+	unsigned long long totalTime1 = (time1.tv_sec * 1000) + (time1.tv_usec/1000);
 
 	i = 0;
 	std::vector<int> b;
@@ -393,7 +393,7 @@ int main()
 
 	gettimeofday(&time1, NULL);  //END-TIME
 
-	totalTime1 = ((time1.tv_sec * 1000000) + (time1.tv_usec) - totalTime1);
+	totalTime1 = ((time1.tv_sec * 1000) + (time1.tv_usec/1000) - totalTime1);
 
 	std::cout << "Execution time for STD vector is " << totalTime1 << std::endl;
 
@@ -403,7 +403,7 @@ int main()
 
 	struct timeval time2;
 	gettimeofday(&time2, NULL); // Start Time
-	long totalTime2 = (time2.tv_sec * 1000000) + (time2.tv_usec);
+	unsigned long long totalTime2 = (time2.tv_sec * 1000) + (time2.tv_usec / 1000);
 
 	ft::map<int, std::string> map_test;
 
@@ -414,7 +414,7 @@ int main()
 
 	gettimeofday(&time2, NULL);  //END-TIME
 
-	totalTime = ((time2.tv_sec * 1000000) + (time2.tv_usec) - totalTime2);
+	totalTime2 = ((time2.tv_sec * 1000) + (time2.tv_usec / 1000) - totalTime2);
 
 	std::cout << "Execution time for my map is " << totalTime2 << std::endl;
 
@@ -426,7 +426,7 @@ int main()
 	
 	struct timeval time3;
 	gettimeofday(&time3, NULL); // Start Time
-	long totalTime3 = (time3.tv_sec * 1000000) + (time3.tv_usec);
+	unsigned long long totalTime3 = (time3.tv_sec * 1000) + (time3.tv_usec / 1000);
 
 
 	std::map<int, std::string> map_test1;
@@ -438,9 +438,52 @@ int main()
 
 	gettimeofday(&time3, NULL);  //END-TIME
 
-	totalTime3 = ((time3.tv_sec * 1000000) + (time3.tv_usec) - totalTime3);
+	totalTime3 = ((time3.tv_sec * 1000) + (time3.tv_usec / 1000) - totalTime3);
 
 	std::cout << "Execution time for STD map is " << totalTime3 << std::endl;
+
+	std::cout << std::endl << std::endl << std::endl;
+
+		std::cout << "________________MY STACK________________" << std::endl;
+
+	struct timeval time4;
+	gettimeofday(&time4, NULL); // Start Time
+	unsigned long long totaltime4 = (time4.tv_sec * 1000) + (time4.tv_usec / 1000);
+
+	ft::stack<ft::pair<int, std::string> > stack_test;
+
+	i = 0;
+	while (i < 1000000)
+		stack_test.push(ft::make_pair(i++, "Hello"));
+
+	gettimeofday(&time4, NULL);  //END-TIME
+
+	totaltime4 = ((time4.tv_sec * 1000) + (time4.tv_usec / 1000) - totaltime4);
+
+	std::cout << "Execution time for my stack is " << totaltime4 << std::endl;
+
+	std::cout << std::endl << std::endl << std::endl;
+
+
+	std::cout << "________________STD STACK________________" << std::endl;
+
+	
+	struct timeval time5;
+	gettimeofday(&time5, NULL); // Start Time
+	unsigned long long totaltime5 = (time5.tv_sec * 1000) + (time5.tv_usec / 1000);
+
+
+	std::stack<std::pair<int, std::string> > stack_test1;
+
+	i = 0;
+	while (i < 1000000)
+		stack_test1.push(std::make_pair(i++, "Hello"));
+
+	gettimeofday(&time5, NULL);  //END-TIME
+
+	totaltime5 = ((time5.tv_sec * 1000) + (time5.tv_usec / 1000) - totaltime5);
+
+	std::cout << "Execution time for STD stack is " << totaltime5 << std::endl;
 
 	std::cout << std::endl << std::endl << std::endl;
 }
@@ -529,22 +572,22 @@ int main(int argc, char** argv) {
 	ft::stack<Buffer, std::deque<Buffer> > stack_deq_buffer;
 	ft::map<int, int> map_int;
 
-	for (int i = 0; i < 10000; i++)
+	for (int i = 0; i < COUNT; i++)
 	{
 		vector_buffer.push_back(Buffer());
 	}
 
-	for (int i = 0; i < 10000; i++)
+	for (int i = 0; i < COUNT; i++)
 	{
-		const int idx = rand() % 10000;
+		const int idx = rand() % COUNT;
 		vector_buffer[idx].idx = 5;
 	}
 	ft::vector<Buffer>().swap(vector_buffer);
 	try
 	{
-		for (int i = 0; i < 10000; i++)
+		for (int i = 0; i < COUNT; i++)
 		{
-			const int idx = rand() % 10000;
+			const int idx = rand() % COUNT;
 			vector_buffer.at(idx);
 			std::cerr << "Error: THIS vector SHOULD BE EMPTY!!" <<std::endl;
 		}
@@ -555,14 +598,14 @@ int main(int argc, char** argv) {
 		//NORMAL ! :P
 	}
 
-	for (int i = 0; i < 10000; ++i)
+	for (int i = 0; i < COUNT; ++i)
 	{
 		map_int.insert(ft::make_pair(rand(), rand()));
 	}
 	
 
 	int sum = 0;
-	for (int i = 0; i < 10000; i++)
+	for (int i = 0; i < COUNT; i++)
 	{
 		int access = rand();
 		sum += map_int[access];
@@ -834,11 +877,18 @@ std::cout << "----------MINE_INSERT-----------" << std::endl;
 
   // showing contents:
   std::cout << "mymap contains:\n";
-  for (it=mymap.begin(); it!=mymap.end(); ++it)
+  for (ft::map<char,int>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
     std::cout << it->first << " => " << it->second << '\n';
  std::cout << "anothermap contains:\n";
+//  ft::map<char, int>::iterator it_test = anothermap.begin();
+//  std::cout << it_test->first << std::endl;
+//  it_test++;
+//  std::cout << it_test->first << std::endl;
+//  it_test++;
+
   for (it=anothermap.begin(); it!=anothermap.end(); ++it)
     std::cout << it->first << " => " << it->second << '\n';
+//  exit(0);
 }
 
 std::cout << "----------STL_OPERATOR[]-----------" << std::endl;
@@ -1027,6 +1077,7 @@ std::cout << "----------STL_KEY__COMP-----------" << std::endl;
   std::cout << "mymap contains:\n";
 
   char highest = mymap.rbegin()->first;     // key value of last element
+	std::cout << "Highest : " << highest << std::endl;
 
   std::map<char,int>::iterator it = mymap.begin();
   do {
@@ -1048,7 +1099,7 @@ std::cout << "----------MINE_KEY__COMP-----------" << std::endl;
   std::cout << "mymap contains:\n";
 
   char highest = mymap.rbegin()->first;     // key value of last element
-
+	std::cout << "Highest : " << highest << std::endl;
   ft::map<char,int>::iterator it = mymap.begin();
   do {
     std::cout << it->first << " => " << it->second << '\n';
