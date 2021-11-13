@@ -15,7 +15,7 @@ namespace ft
 	template <class InputIterator, class Distance>
 	void advance (InputIterator& it, Distance n)
 	{
-		it = it + n;
+		it += n;
 	}
 
 

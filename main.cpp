@@ -6,6 +6,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <chrono>
+#include <memory>
 
 #include <time.h>
 
@@ -23,8 +24,8 @@
 	#include "Iterator.hpp"
 #endif
 
-
-void output_my_s(ft::stack<int> &t)
+template<class T>
+void output_my_s(ft::stack<int, T> &t)
 {
 	ft::stack<int> buff;
 	std::cout << "______My stack______" << std::endl;
@@ -102,117 +103,749 @@ int main()
 	gettimeofday(&time, NULL); // Start Time
 	long totalTime = (time.tv_sec * 1000000) + (time.tv_usec);
 
-	ft::vector<int> test;
-	ft::vector<int> test1;
 
-	std::cout << "________________vector________________" << std::endl;
-
-	std::cout << "capacity of test is " << test.capacity() << std::endl;
-	std::cout << "size of test is " << test.size() << std::endl;
-	std::cout << "max_size of test is " << test.max_size() << std::endl;
-
-
-	test1.push_back(1);
-	test1.push_back(1);
-	test1.push_back(1);
-	test1.push_back(1);
-
-
-
-	test.push_back(100);
-	test.push_back(0);
-	test.push_back(3);
-	test.push_back(4);
-	test.push_back(5);
-	test.push_back(7);
-	test.push_back(6);
-	test.push_back(2);
-	test[4] = 4;
-	test.push_back(9);
-	test.push_back(8);
-	test.push_back(10);
-
-
-	// test.insert(test.begin(), 1000);
-	ft::vector<int>::iterator begin = test.begin();
-	ft::vector<int>::const_iterator end = test.end();
-
-	ft::vector<int>::reverse_iterator rbegin = test.rbegin();
-	ft::vector<int> tests((int)10, (int)100);
-	ft::vector<int>::const_reverse_iterator rend = tests.rend();
+	std::cout << "________________VECTOR________________" << std::endl;
 	
-
-	std::cout << "Comparing const_iterator and iterator : " << (begin != end) << std::endl;
-
-	std::cout << "Comparing const_reverse_iterator and reverse_iterator : " << (rbegin != rend) << std::endl;
-
-	std::cout << std::endl << std::endl << std::endl;
-	
-		// (*begin++);
-
-	std::cout << "BEFORE SWAP test is :" << std::endl;
-	
-	output_v(test);
-	std::cout << "test1 is :" << std::endl;
-	output_v(test1);
-
-	test.swap(test1);
-	
-
-	std::cout << "AFTER SWAP test is :" << std::endl;
-	output_v(test);
-	std::cout << "test1 is :" << std::endl;
-	output_v(test1);
-
-	std::cout << std::endl << std::endl << std::endl;
-
-	std::cout << "Are iterators still working ??" << std::endl;
-	while (begin != end)
 	{
-		std::cout << (*begin) << std::endl;
-		begin++;
+		std::cout << "_____default constructor_____" << std::endl;
+		ft::vector<int> test;
+		output_v(test);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____allocator constructor_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		output_v(test);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____fill constructor_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(10, 100, a);
+		output_v(test);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____range constructor_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(10, 100, a);
+		ft::vector<int> test1(test.begin(), test.begin() + 5, a);
+		output_v(test1);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____copy constructor_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(10, 100, a);
+		ft::vector<int> test1(test);
+		output_v(test1);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____operator =_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(10, 100, a);
+		ft::vector<int> test1;
+		test1 = test;
+		output_v(test1);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____assign count and values_____" << std::endl;
+		ft::vector<int> test1;
+		test1.assign(10, 100);
+		output_v(test1);
+		std::cout << std::endl;
+
+	}
+
+	{
+		std::cout << "_____assign range_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(10, 100, a);
+		ft::vector<int> test1;
+		test1.assign(test.begin(), test.begin() + 5);
+		output_v(test1);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____get_allocator()_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(10, 100, a);
+		ft::vector<int> test1(10, 100, test.get_allocator());
+		output_v(test1);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____at_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		std::cout << "at index 3 : " << test.at(3) << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____operator []_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		std::cout << "test[3] : " << test[3] << std::endl;
+		std::cout << std::endl;
 	}
 	
-	std::cout << std::endl << std::endl << std::endl;
+	{
+		std::cout << "_____front_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		std::cout << "front : " << test.front() << std::endl;
+		std::cout << std::endl;
+	}
 
-	std::cout << "is test smaller than test1 ? " << (test < test1) << std::endl;
+	{
+		std::cout << "_____back_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		std::cout << "back : " << test.back() << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____data_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		std::cout << "data : " << test.data()[0] << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____begin_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		std::cout << "begin : " << *(test.begin()) << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____const begin_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		ft::vector<int>::const_iterator it = test.begin();
+		std::cout << "const begin : " << *it << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____end_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		ft::vector<int>::const_iterator it = test.end();
+		std::cout << "end : " << *--it << std::endl;
+		std::cout << std::endl;
+	}	
+	{
+		std::cout << "_____const end_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		ft::vector<int>::const_iterator it = test.end();
+		std::cout << "const end : " << *--it << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____rbegin_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		ft::vector<int>::reverse_iterator it = test.rbegin();
+		std::cout << "rbegin : " << *it << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____const rbegin_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		ft::vector<int>::const_reverse_iterator it = test.rbegin();
+		std::cout << "const rbegin : " << *it << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____rend_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		ft::vector<int>::reverse_iterator it = test.rend();
+		std::cout << "rend : " << *--it << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____const rend_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		ft::vector<int>::const_reverse_iterator it = test.rend();
+		std::cout << "const rend : " << *--it << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____empty_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		ft::vector<int> test1;
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		std::cout << "empty test :" << test.empty() << std::endl;
+		std::cout << "empty test1 :" << test1.empty() << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____size_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		std::cout << "size : " << test.size() << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____max_size_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		std::cout << "max_size : " << test.max_size() << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____reserve() and capacity_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.reserve(100);
+		std::cout << "capacity : " << test.capacity() << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____clear_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		test.clear();
+		output_v(test);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____insert single element_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.insert(test.begin(), 5);
+		test.insert(test.begin(), 6);
+		test.insert(test.begin(), 7);
+		output_v(test);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____insert n elements with value value_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.insert(test.begin(), 5, 10);
+		output_v(test);
+		std::cout << std::endl;
+	}
+
+
+	{
+		std::cout << "_____insert elements based on iterator range_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		ft::vector<int> test1;
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+
+		test1.insert(test1.begin(), test.begin(), test.end());
+		output_v(test1);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____erase element in position_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+
+		test.erase(test.begin() + 2);
+		output_v(test);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____erase elements based on range_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+
+		test.erase(test.begin(), test.begin() + 2);
+		output_v(test);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____push_back_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+
+		output_v(test);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____pop_back_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.pop_back();
+		test.pop_back();
+		output_v(test);
+		std::cout << std::endl;
+	}
 	
-	std::cout << std::endl << std::endl << std::endl;
+	{
+		std::cout << "_____resize bigger_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		test.resize(20);
+		output_v(test);
+		std::cout << std::endl;
+	}
 
-	std::cout << "capacity of test is " << test.capacity() << std::endl;
-	std::cout << "size of test is " << test.size() << std::endl;
+	{
+		std::cout << "_____resize smaller_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+		test.push_back(4);
+		test.push_back(5);
+		test.push_back(6);
+		test.push_back(7);
+		test.push_back(8);
+		test.push_back(9);
+		test.resize(4);
+		output_v(test);
+		std::cout << std::endl;
+	}
 
-	std::cout << std::endl << std::endl << std::endl;
-	std::cout << std::endl << std::endl << std::endl;
+	{
+		std::cout << "_____ft::swap / swap and iterators_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
 
-	std::cout << "________________stack________________" << std::endl;
+		ft::vector<int> test1(a);
+		test1.push_back(3);
+		test1.push_back(2);
+		test1.push_back(1);
+		test1.push_back(0);
 
-	ft::stack<int> georges;
+		ft::vector<int>::iterator it = test.begin();
+		ft::vector<int>::iterator ite = test.end();
+		std::cout << "Before swap : " << std::endl;
+		output_v(test);
+		output_v(test1);
+		ft::swap(test, test1);
+		std::cout << "After swap : " << std::endl;
+		output_v(test);
+		output_v(test1);
+		std::cout << "Iterators : " << *it << " -- " << *--ite << std::endl;
+		std::cout << std::endl;
+	}
 
-	georges.push(0);
-	georges.push(1);
-	georges.push(2);
-	georges.push(3);
-	georges.push(4);
-	georges.push(5);
-	georges.push(6);
-	georges.push(7);
-	georges.push(8);
-	georges.push(9);
+	{
+		std::cout << "_____comparison operators_____" << std::endl;
+		std::allocator<int> a;
+		ft::vector<int> test(a);
+		test.push_back(0);
+		test.push_back(1);
+		test.push_back(2);
+		test.push_back(3);
+
+		ft::vector<int> test1(a);
+		test1.push_back(7);
+		test1.push_back(8);
+		test1.push_back(3);
+		test1.push_back(2);
+		test1.push_back(1);
+		test1.push_back(0);
+
+		std::cout << "> : " << (test > test1) << std::endl;
+		std::cout << ">= : " << (test >= test1) << std::endl;
+		std::cout << "< : " << (test < test1) << std::endl;
+		std::cout << "<= : " << (test <= test1) << std::endl;
+		std::cout << "== : " << (test == test1) << std::endl;
+		std::cout << "!= : " << (test != test1) << std::endl;
+		std::cout << std::endl;
+	}
 
 
+	std::cout << "________________STACK________________" << std::endl;
 
-	std::cout << "Before pop()" << std::endl;
-	output_my_s(georges);
+{
+	std::cout << "_____default constructor_____" << std::endl;
+	ft::vector<int> a;
+	ft::stack<int, ft::vector<int> > test;
+	test.push(0);
+	test.push(1);
+	test.push(2);
+	test.push(3);
+	output_my_s(test);
+	std::cout << std::endl;
+}
 
-	while (!georges.empty())
-		georges.pop();
+{
+	std::cout << "_____underlying container constructor_____" << std::endl;
+	ft::vector<int> a;
+	ft::stack<int, ft::vector<int> > test(a);
+	test.push(0);
+	test.push(1);
+	test.push(2);
+	test.push(3);
+	output_my_s(test);
+	std::cout << std::endl;
+}
 
-	output_my_s(georges);
-	
-	
-	std::cout << "________________pair________________" << std::endl;
+{
+	std::cout << "_____copy constructor_____" << std::endl;
+	ft::vector<int> a;
+	ft::stack<int, ft::vector<int> > test(a);
+	test.push(0);
+	test.push(1);
+	test.push(2);
+	test.push(3);
+	ft::stack<int, ft::vector<int> > test1(test);
+	output_my_s(test);
+	std::cout << std::endl;
+}
 
+{
+	std::cout << "_____operator =_____" << std::endl;
+	ft::vector<int> a;
+	ft::stack<int, ft::vector<int> > test(a);
+	test.push(0);
+	test.push(1);
+	test.push(2);
+	test.push(3);
+	ft::stack<int, ft::vector<int> > test1;
+	test1 = test;
+	output_my_s(test);
+	std::cout << std::endl;
+}
+
+{
+	std::cout << "_____top_____" << std::endl;
+	ft::vector<int> a;
+	ft::stack<int, ft::vector<int> > test(a);
+	test.push(0);
+	test.push(1);
+	test.push(2);
+	test.push(3);
+	std::cout << "top : " << test.top() << std::endl;
+	std::cout << std::endl;
+}
+
+{
+	std::cout << "_____empty_____" << std::endl;
+	ft::vector<int> a;
+	ft::stack<int, ft::vector<int> > test(a);
+	test.push(0);
+	test.push(1);
+	test.push(2);
+	test.push(3);
+	std::cout << "empty : " << test.empty() << std::endl;
+	std::cout << std::endl;
+}
+
+{
+	std::cout << "_____size_____" << std::endl;
+	ft::vector<int> a;
+	ft::stack<int, ft::vector<int> > test(a);
+	test.push(0);
+	test.push(1);
+	test.push(2);
+	test.push(3);
+	std::cout << "size : " << test.size() << std::endl;
+	std::cout << std::endl;
+}
+
+{
+	std::cout << "_____push_____" << std::endl;
+	ft::vector<int> a;
+	ft::stack<int, ft::vector<int> > test(a);
+	test.push(0);
+	test.push(1);
+	test.push(2);
+	test.push(3);
+	output_my_s(test);
+	std::cout << std::endl;
+}
+
+{
+	std::cout << "_____pop_____" << std::endl;
+	ft::vector<int> a;
+	ft::stack<int, ft::vector<int> > test(a);
+	test.push(0);
+	test.push(1);
+	test.push(2);
+	test.push(3);
+	test.pop();
+	test.pop();
+	output_my_s(test);
+	std::cout << std::endl;
+}
+
+{
+	std::cout << "_____comparison operators_____" << std::endl;
+	ft::vector<int> a;
+	ft::stack<int, ft::vector<int> > test(a);
+	test.push(0);
+	test.push(1);
+	test.push(2);
+	test.push(3);
+
+	ft::stack<int, ft::vector<int> > test1(a);
+	test1.push(7);
+	test1.push(8);
+	test1.push(3);
+	test1.push(2);
+	test1.push(1);
+	test1.push(0);
+
+	std::cout << "> : " << (test > test1) << std::endl;
+	std::cout << ">= : " << (test >= test1) << std::endl;
+	std::cout << "< : " << (test < test1) << std::endl;
+	std::cout << "<= : " << (test <= test1) << std::endl;
+	std::cout << "== : " << (test == test1) << std::endl;
+	std::cout << "!= : " << (test != test1) << std::endl;
+	std::cout << std::endl;
+}
+	std::cout << "________________PAIR________________" << std::endl;
+
+	ft::pair<int, int> test(10, 10);
+	ft::pair<int, int> test1;
+	test1 = test;
+	ft::pair<int, int> test2(test1);
+	std::cout << test1.first << " " << test1.second << std::endl;
+	std::cout << test2.first << " " << test2.second << std::endl;
 	ft::pair<int, int> pairtest = ft::make_pair(100 , 1000);
 	std::pair<int, int> real = std::make_pair(100, 1000);
 
@@ -238,7 +871,7 @@ int main()
 	std::cout << "Comparison operators for pair real != real1 " << (real != real1) << std::endl;
 
 
-	std::cout << "________________map________________" << std::endl;
+	std::cout << "________________MAP________________" << std::endl;
 
 	ft::map<const int, std::string> map_test;
 
@@ -270,10 +903,10 @@ int main()
 
 	
 	
-	// std::cout << "After erase" << std::endl;
-	// map_test.erase(10);
-	// map_test.erase(11);
-	// output_my_map(map_test);
+	std::cout << "After erase" << std::endl;
+	map_test.erase(10);
+	map_test.erase(11);
+	output_my_map(map_test);
 
 	std::cout << "map_test[-10] : " << map_test[-10] << std::endl;
 	output_my_map(map_test);
@@ -296,43 +929,6 @@ int main()
 
 	std::cout << "________________EXTRA TESTS________________" << std::endl;
 
-	ft::vector<int>::iterator begin1 = test1.begin();
-
-	output_v(test1);
-	std::cout << std::endl << std::endl << std::endl;
-
-	std::cout << "*begin :" << *begin1 << std::endl;
-
-	std::cout << "*begin++ :" << *begin1++ << std::endl;
-	std::cout << "*begin-- :" << *begin1-- << std::endl;
-	std::cout << "*++begin :" << *++begin1 << std::endl;
-	std::cout << "*--begin :" << *--begin1 << std::endl;
-	
-	*begin1 = 10;
-
-	std::cout << "*begin1 = 10 : " << *begin1 << std::endl;
-
-	std::cout << "*begin1 : " << *begin1 << std::endl;
-	begin1 += 2;
-
-	ft::vector<int>::iterator begin2 = test1.begin();
-	int a = begin1 - begin2;
-	std::cout << "begin - begin, should be 2 : " << a << std::endl;
-	std::cout << "*begin1 + 2 : " << *begin1 << std::endl;
-
-	begin1 += 2;
-	
-	std::cout << "*begin += 2 : " << *begin1 << std::endl;
-	
-	begin1 -= 2;
-	
-	std::cout << "*begin -= 2 : " << *begin1 << std::endl;
-
-
-	ft::vector<int>::const_iterator test12 = test1.begin();
-	ft::vector<int>::iterator test123 = test1.begin();
-
-	std::cout << "Comparing const_iterator and iterator : " << (test12 == test123) << std::endl;
 }
 
 #elif VERSION == 1

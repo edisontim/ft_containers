@@ -10,94 +10,109 @@
 #include "Vector.hpp"
 #include "Iterator.hpp"
 
+#include <deque>
+
 namespace ft
 {
-	template <class T, class Container = vector<T> >
+	template <class T, class Container = std::deque<T> >
 	class stack
 	{
-		protected :
-			Container		c;
 
 		public :
-			typedef T				value_type;
-			typedef Container		container_type;
-			typedef unsigned int	size_type;
+			typedef Container							container_type;
+			typedef typename Container::value_type		value_type;
+			typedef typename Container::size_type		size_type;
+			typedef typename Container::reference		reference;
+			typedef typename Container::const_reference	const_reference;
 
+		protected :
+			container_type		c;
+
+		public :
 		//		CONSTRUCTOR/DESTRUCTOR
 		//___________________________________
 		
-			stack()
-			{
-			}
-			stack(const vector<T> &cpy)
-			{
-				typename ft::vector<T>::const_iterator begin = cpy.begin();
-				typename ft::vector<T>::const_iterator end = cpy.end();
+			stack(const Container &cont = Container()) : c(cont) {}
 
-				c.assign(begin, end);
-			}
+			stack(const stack &cpy) : c(cpy.c) {}
 
+			~stack() {}
+
+			stack &operator=(const stack &other)
+			{
+				if (this != &other)
+				{
+					c = other.c;
+				}
+				return (*this);
+			}
+			
 		//		UTILS
 		//___________________________________
-		bool empty(void)
-		{
-			return (!c.size());
-		}
-		size_type size(void) const
-		{
-			return (c.size());
-		}
-		value_type& top() /*throw (std::exception)*/
-		{
-			if (empty())
-				throw std::runtime_error("top() called on empty stack.");
-			return (c.back());
-		}
-		const value_type& top() const
-		{
-			if (empty())
-				throw std::runtime_error("top() called on empty stack.");
-			return (c.back());
-		}
-		void push(const value_type& val)
-		{
-			c.push_back(val);
-		}
-		void pop(void)
-		{
-			if (empty())
-				throw std::runtime_error("pop called on empty stack.");
-			c.pop_back();
-		}
+			reference top()
+			{
+				return (c.back());
+			}
 
-		private :
+			const_reference top() const
+			{
+				return (c.back());
+			}
+
+			bool empty(void) const
+			{
+				return (!c.size());
+			}
+
+			size_type size(void) const
+			{
+				return (c.size());
+			}
+
+			void push(const value_type& val)
+			{
+				c.push_back(val);
+			}
+
+			void pop(void)
+			{
+				c.pop_back();
+			}
+
 		//		OPERATORS
 		//___________________________________
-		friend bool operator==(const stack<T> &lhs, const stack<T> &rhs)
+
+		friend bool operator==(const stack<T, Container> &lhs, const stack<T, Container> &rhs)
 		{
 			return (lhs.c == rhs.c);
 		}
-		friend bool operator!=(const stack<T> &lhs, const stack<T> &rhs)
+
+		friend bool operator!=(const stack<T, Container> &lhs, const stack<T, Container> &rhs)
 		{
 			return (lhs.c != rhs.c);
 		}
-		friend bool operator<(const stack<T> &lhs, const stack<T> &rhs)
+
+		friend bool operator<(const stack<T, Container> &lhs, const stack<T, Container> &rhs)
 		{
 			return (lhs.c < rhs.c);
 		}
-		friend bool operator<=(const stack<T> &lhs, const stack<T> &rhs)
+
+		friend bool operator<=(const stack<T, Container> &lhs, const stack<T, Container> &rhs)
 		{
 			return (lhs.c <= rhs.c);
 		}
-		friend bool operator>(const stack<T> &lhs, const stack<T> &rhs)
+
+		friend bool operator>(const stack<T, Container> &lhs, const stack<T, Container> &rhs)
 		{
 			return (lhs.c > rhs.c);
 		}
-		friend bool operator>=(const stack<T> &lhs, const stack<T> &rhs)
+
+		friend bool operator>=(const stack<T, Container> &lhs, const stack<T, Container> &rhs)
 		{
 			return (lhs.c >= rhs.c);
 		}
 	};
+
 }
 
 #endif

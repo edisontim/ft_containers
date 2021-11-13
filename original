@@ -1,0 +1,386 @@
+_____________________RUNNING STL_____________________
+
+
+
+
+_____________________MY_MAIN_____________________
+________________VECTOR________________
+_____default constructor_____
+My vector contains :
+
+_____allocator constructor_____
+My vector contains :
+
+_____fill constructor_____
+My vector contains :
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+
+_____range constructor_____
+My vector contains :
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+
+_____copy constructor_____
+My vector contains :
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+
+_____operator =_____
+My vector contains :
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+
+_____assign count and values_____
+My vector contains :
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+
+_____assign range_____
+My vector contains :
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+
+_____get_allocator()_____
+My vector contains :
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+My vector |100|
+
+_____at_____
+at index 3 : 3
+
+_____operator []_____
+test[3] : 3
+
+_____front_____
+front : 0
+
+_____back_____
+back : 9
+
+_____data_____
+data : 0
+
+_____begin_____
+begin : 0
+
+_____const begin_____
+const begin : 0
+
+_____end_____
+end : 9
+
+_____const end_____
+const end : 9
+
+_____rbegin_____
+rbegin : 9
+
+_____const rbegin_____
+const rbegin : 9
+
+_____rend_____
+rend : 0
+
+_____const rend_____
+const rend : 0
+
+_____empty_____
+empty test :0
+empty test1 :1
+
+_____size_____
+size : 10
+
+_____max_size_____
+max_size : 4611686018427387903
+
+_____reserve() and capacity_____
+capacity : 100
+
+_____clear_____
+My vector contains :
+
+_____insert single element_____
+My vector contains :
+My vector |7|
+My vector |6|
+My vector |5|
+My vector |0|
+My vector |1|
+My vector |2|
+My vector |3|
+My vector |4|
+
+_____insert n elements with value value_____
+My vector contains :
+My vector |10|
+My vector |10|
+My vector |10|
+My vector |10|
+My vector |10|
+My vector |0|
+My vector |1|
+My vector |2|
+My vector |3|
+My vector |4|
+
+_____insert elements based on iterator range_____
+My vector contains :
+My vector |0|
+My vector |1|
+My vector |2|
+My vector |3|
+My vector |4|
+
+_____erase element in position_____
+My vector contains :
+My vector |0|
+My vector |1|
+My vector |3|
+My vector |4|
+
+_____erase elements based on range_____
+My vector contains :
+My vector |2|
+My vector |3|
+My vector |4|
+
+_____push_back_____
+My vector contains :
+My vector |0|
+My vector |1|
+My vector |2|
+My vector |3|
+My vector |4|
+
+_____pop_back_____
+My vector contains :
+My vector |0|
+My vector |1|
+My vector |2|
+
+_____resize bigger_____
+My vector contains :
+My vector |0|
+My vector |1|
+My vector |2|
+My vector |3|
+My vector |4|
+My vector |5|
+My vector |6|
+My vector |7|
+My vector |8|
+My vector |9|
+My vector |0|
+My vector |0|
+My vector |0|
+My vector |0|
+My vector |0|
+My vector |0|
+My vector |0|
+My vector |0|
+My vector |0|
+My vector |0|
+
+_____resize smaller_____
+My vector contains :
+My vector |0|
+My vector |1|
+My vector |2|
+My vector |3|
+
+_____ft::swap / swap and iterators_____
+Before swap : 
+My vector contains :
+My vector |0|
+My vector |1|
+My vector |2|
+My vector |3|
+My vector contains :
+My vector |3|
+My vector |2|
+My vector |1|
+My vector |0|
+After swap : 
+My vector contains :
+My vector |3|
+My vector |2|
+My vector |1|
+My vector |0|
+My vector contains :
+My vector |0|
+My vector |1|
+My vector |2|
+My vector |3|
+Iterators : 0 -- 3
+
+_____comparison operators_____
+> : 0
+>= : 0
+< : 1
+<= : 1
+== : 0
+!= : 1
+
+________________STACK________________
+_____default constructor_____
+______My stack______
+3
+2
+1
+0
+
+_____underlying container constructor_____
+______My stack______
+3
+2
+1
+0
+
+_____copy constructor_____
+______My stack______
+3
+2
+1
+0
+
+_____operator =_____
+______My stack______
+3
+2
+1
+0
+
+_____top_____
+top : 3
+
+_____empty_____
+empty : 0
+
+_____size_____
+size : 4
+
+_____push_____
+______My stack______
+3
+2
+1
+0
+
+_____pop_____
+______My stack______
+1
+0
+
+_____comparison operators_____
+> : 0
+>= : 0
+< : 1
+<= : 1
+== : 0
+!= : 1
+
+________________PAIR________________
+Comparison operators for pair test > test1 0
+Comparison operators for pair real > real1 0
+Comparison operators for pair test < test1 0
+Comparison operators for pair real < real1 0
+Comparison operators for pair test >= test1 1
+Comparison operators for pair real >= real1 1
+Comparison operators for pair test <= test1 1
+Comparison operators for pair real <= real1 1
+Comparison operators for pair test == test1 1
+Comparison operators for pair real == real1 1
+Comparison operators for pair test != test1 0
+Comparison operators for pair real != real1 0
+________________MAP________________
+Before erase
+Size before erase : 17
+After erase
+Map is :
+keys :|-10|		values : |hihi|
+keys :|-2|		values : |Bro|
+keys :|1|		values : |Hello|
+keys :|2|		values : |aisufdha|
+keys :|3|		values : |lulu|
+keys :|4|		values : |1002391093|
+keys :|5|		values : |blabalbla|
+keys :|6|		values : |lala|
+keys :|7|		values : |lolooloo|
+keys :|8|		values : |LOL|
+keys :|19|		values : |aaaaaaaaaaa|
+keys :|25|		values : |huhu|
+keys :|100|		values : |pppppppppppppp|
+keys :|772|		values : |adfhafadfhafadfhafadfhafadfhafadfhafadfhafadfhafadfhaf|
+keys :|2398402|		values : |yyyyyyyyyyy|
+map_test[-10] : hihi
+Map is :
+keys :|-10|		values : |hihi|
+keys :|-2|		values : |Bro|
+keys :|1|		values : |Hello|
+keys :|2|		values : |aisufdha|
+keys :|3|		values : |lulu|
+keys :|4|		values : |1002391093|
+keys :|5|		values : |blabalbla|
+keys :|6|		values : |lala|
+keys :|7|		values : |lolooloo|
+keys :|8|		values : |LOL|
+keys :|19|		values : |aaaaaaaaaaa|
+keys :|25|		values : |huhu|
+keys :|100|		values : |pppppppppppppp|
+keys :|772|		values : |adfhafadfhafadfhafadfhafadfhafadfhafadfhafadfhafadfhaf|
+keys :|2398402|		values : |yyyyyyyyyyy|
+map_test.count(10) : 0
+map_test.equal_range(0) : 1
+Execution time is 2119
+
+
+
+________________EXTRA TESTS________________

@@ -8,7 +8,7 @@
 
 namespace ft
 {
-template <class Key, class T, class Compare = std::less<Key> >
+template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<std::pair<const Key, T> > >
 class map
 {
 
@@ -20,8 +20,8 @@ class map
 	typedef const Compare 										key_compare;
 	typedef std::ptrdiff_t										difference_type;
 	typedef unsigned int										size_type;
-	typedef std::allocator<T>									allocator_type;
-	typedef RBTree<ft::map<Key, T, Compare> >					RBTree;
+	typedef Allocator											allocator_type;
+	typedef RBTree<ft::map<Key, T, Compare>, allocator_type>	RBTree;
 	typedef typename RBTree::Node_ptr							Node_ptr;
 	typedef value_type*											pointer;
 	typedef const pointer										const_pointer;

@@ -23,24 +23,24 @@ namespace ft
 		~Node() {}
 	};
 
-	template<typename Container>
+	template<class Container, class Allocator = std::allocator<Node<typename Container::value_type> > >
 	class RBTree
 	{
 		public :
-			typedef typename Container::value_type				value_type;
-			typedef typename Container::key_type				key_type;
-			typedef typename Container::mapped_type				mapped_type;
-			typedef Node<value_type>							Node;
-			typedef Node*										Node_ptr;
-			typedef typename Container::key_compare				key_compare;
-			typedef typename Container::allocator_type			allocator_type;
-			typedef typename Container::size_type				size_type;
+			typedef typename Container::value_type									value_type;
+			typedef typename Container::key_type									key_type;
+			typedef typename Container::mapped_type									mapped_type;
+			typedef typename Allocator::template rebind<Node<value_type> >::other	allocator_type;
+			typedef Node<value_type>												Node;
+			typedef Node*															Node_ptr;
+			typedef typename Container::key_compare									key_compare;
+			typedef typename Container::size_type									size_type;
 
 		private:
 			Node_ptr				root;
 			Node_ptr				TNULL;
 			key_compare				comp;
-			std::allocator<Node>	allocator;
+			allocator_type			allocator;
 			size_type 				size;
 
 
