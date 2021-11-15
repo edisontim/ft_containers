@@ -75,10 +75,10 @@ void reverse_output_v(ft::vector<int> &test)
 	}
 }
 
-void output_my_map(ft::map<const int, std::string> &a)
+void output_my_map(ft::map<const std::string, int, std::less<const std::string>, std::allocator<ft::pair<const std::string, int> > > &a)
 {	
-	ft::map<const int, std::string>::iterator begin = a.begin();
-	ft::map<const int, std::string>::iterator end = a.end();
+	ft::map<const std::string, int, std::less<const std::string>, std::allocator<ft::pair<const std::string, int> > >::iterator begin = a.begin();
+	ft::map<const std::string, int, std::less<const std::string>, std::allocator<ft::pair<const std::string, int> > >::iterator end = a.end();
 	
 	std::cout << "Map is :" << std::endl;
 	while (begin != end)
@@ -92,16 +92,10 @@ void output_my_map(ft::map<const int, std::string> &a)
 
 int main()
 {
-	if (STL)
-		std::cout << "_____________________RUNNING STL_____________________" << std::endl<< std::endl<< std::endl<< std::endl<< std::endl;
-	else
-		std::cout << "_____________________RUNNING MINE_____________________" << std::endl<< std::endl<< std::endl<< std::endl<< std::endl;
-
-	
-	std::cout << "_____________________MY_MAIN_____________________" << std::endl;
-	struct timeval time;
-	gettimeofday(&time, NULL); // Start Time
-	long totalTime = (time.tv_sec * 1000000) + (time.tv_usec);
+	// if (STL)
+	// 	std::cout << "_____________________RUNNING STL_____________________" << std::endl<< std::endl<< std::endl<< std::endl<< std::endl;
+	// else
+	// 	std::cout << "_____________________RUNNING MINE_____________________" << std::endl<< std::endl<< std::endl<< std::endl<< std::endl;
 
 
 	std::cout << "________________VECTOR________________" << std::endl;
@@ -659,7 +653,6 @@ int main()
 		test1.push_back(0);
 
 		ft::vector<int>::iterator it = test.begin();
-		ft::vector<int>::iterator ite = test.end();
 		std::cout << "Before swap : " << std::endl;
 		output_v(test);
 		output_v(test1);
@@ -667,7 +660,11 @@ int main()
 		std::cout << "After swap : " << std::endl;
 		output_v(test);
 		output_v(test1);
-		std::cout << "Iterators : " << *it << " -- " << *--ite << std::endl;
+		while (it != test1.end())
+		{
+			std::cout << "Iterators : " << *it << std::endl;
+			it++;
+		}
 		std::cout << std::endl;
 	}
 
@@ -872,63 +869,496 @@ int main()
 
 
 	std::cout << "________________MAP________________" << std::endl;
+	typedef ft::map<const std::string, int, std::less<const std::string>, std::allocator<ft::pair<const std::string, int> > > map;
+	{
+		std::cout << "_____default constructor_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		map test;
+		test.insert(ft::make_pair("Hello", 10));
+		output_my_map(test);
+		std::cout << std::endl;
+	}
 
-	ft::map<const int, std::string> map_test;
+	{
+		std::cout << "_____compare and allocator constructor_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		output_my_map(test);
+		std::cout << std::endl;
+	}
 
-	std::string stringa = "Hello";
+	{
+		std::cout << "_____iterator range constructor_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		map test1(test.begin(), test.end());
+		output_my_map(test1);
+		std::cout << std::endl;
+	}
 
-	map_test.insert(ft::make_pair(1, stringa));
-	map_test.insert(ft::make_pair(10, stringa));
-	map_test.insert(ft::make_pair(8, std::string("LOL")));
-	map_test.insert(ft::make_pair(2, std::string("aisufdha")));
-	map_test.insert(ft::make_pair(4, std::string("1002391093")));
-	map_test.insert(ft::make_pair(5, std::string("blabalbla")));
-	map_test.insert(ft::make_pair(7, std::string("lolooloo")));
-	map_test.insert(ft::make_pair(3, std::string("lulu")));
-	map_test.insert(ft::make_pair(6, std::string("lala")));
-	map_test.insert(ft::make_pair(11, std::string("haha")));
-	map_test.insert(ft::make_pair(25, std::string("huhu")));
-	map_test.insert(ft::make_pair(-10, std::string("hihi")));
-	map_test.insert(ft::make_pair(-2, std::string("Bro")));
-	map_test.insert(ft::make_pair(772, std::string("adfhafadfhafadfhafadfhafadfhafadfhafadfhafadfhafadfhaf")));
-	map_test.insert(ft::make_pair(2398402, std::string("yyyyyyyyyyy")));
-	map_test.insert(ft::make_pair(19, std::string("aaaaaaaaaaa")));
-	map_test.insert(ft::make_pair(100, std::string("pppppppppppppp")));
-	map_test.insert(ft::make_pair(100, std::string("pppppppppppppp")));
+	{
+		std::cout << "_____copy constructor_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		map test1(test);
+		output_my_map(test1);
+		std::cout << std::endl;
+	}
 
+	{
+		std::cout << "_____operator =_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		map test1;
+		test1 = test;
+		output_my_map(test1);
+		std::cout << std::endl;
+	}
 
+	{
+		std::cout << "_____get_allocator_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		std::cout << std::boolalpha;
+		std::cout << "equal allocators : " << (a == test.get_allocator()) << std::endl;
+		std::cout << std::endl;
+	}
 
-	std::cout << "Before erase" << std::endl;
-	std::cout << "Size before erase : " << map_test.size() << std::endl;
+	{
+		std::cout << "_____get_allocator_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		std::cout << std::boolalpha;
+		std::cout << "equal allocators : " << (a == test.get_allocator()) << std::endl;
+		std::cout << std::endl;
+	}
 
-	
-	
-	std::cout << "After erase" << std::endl;
-	map_test.erase(10);
-	map_test.erase(11);
-	output_my_map(map_test);
+	{
+		std::cout << "_____at_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		test.at("Ola") = 9;
+		output_my_map(test);
+		std::cout << std::endl;
+	}
 
-	std::cout << "map_test[-10] : " << map_test[-10] << std::endl;
-	output_my_map(map_test);
-	std::cout << "map_test.count(10) : " << map_test.count(10) << std::endl;
-	ft::pair< ft::map<const int, std::string>::iterator, ft::map<const int, std::string>::iterator > pair = map_test.equal_range(0);
-	std::cout << "map_test.equal_range(0) : " << (*pair.first).first << std::endl;
+	{
+		std::cout << "_____operator []_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		test[("Ola")] = 9;
+		output_my_map(test);
+		std::cout << std::endl;
+	}
 
+	{
+		std::cout << "_____begin_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		std::cout << "begin : " << test.begin()->first << std::endl;
+		std::cout << std::endl;
+	}
 
+	{
+		std::cout << "_____begin_const_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		map::const_iterator const_begin = test.begin();
+		std::cout << "begin : " << const_begin->first << std::endl;
+		std::cout << std::endl;
+	}
 
+	{
+		std::cout << "_____end_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		map::iterator end = test.end();
+		std::cout << "end : " << (--end)->first << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____end_const_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		map::const_iterator const_end = test.end();
+		std::cout << "end : " << (--const_end)->first << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____rbegin_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		map::reverse_iterator rbegin = test.rbegin();
+		std::cout << "rbegin : " << (rbegin)->first << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____const_rbegin_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		map::const_reverse_iterator const_rbegin = test.rbegin();
+		std::cout << "const_rbegin : " << (const_rbegin)->first << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____rend_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		map::reverse_iterator rend = test.rend();
+		std::cout << "rend : " << (--rend)->first << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____const_rend_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		map::const_reverse_iterator const_rend = test.rend();
+		std::cout << "const_rend : " << (--const_rend)->first << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____empty_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		std::cout << std::boolalpha;
+		std::cout << "empty : " << test.empty() << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____size_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		std::cout << "size : " << test.size() << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____max_size_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		std::cout << "max_size : " << test.max_size() << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____clear_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		test.clear();
+		output_my_map(test);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____insert single pair_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		output_my_map(test);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____insert with hint single pair_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(test.begin(), ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		output_my_map(test);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____insert by iterator range_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		map test1(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		test1.insert(test.begin(), test.end());
+		output_my_map(test1);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____erase by position_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		test.erase(test.begin());
+		output_my_map(test);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____erase by key value_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		test.erase("Ola");
+		output_my_map(test);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____swap_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		map test1(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		test1.insert(ft::make_pair("Obrigad", 10));
+		test1.insert(ft::make_pair("Gracias", 10));
+		test1.insert(ft::make_pair("Thanks", 10));
+		test1.insert(ft::make_pair("Merci", 10));
+		test.swap(test1);
+		output_my_map(test);
+		output_my_map(test1);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____count_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		std::cout << "count number of \"Hello\"s : " << test.count("Hello") << std::endl;
+		std::cout << "count number of \"Sayonara\"s : " << test.count("Sayonara") << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____find_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		std::cout << "find \"Hello\" : " << test.find("Hello")->first << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____equal_range_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		std::cout << "equal_range de \"Coucou\" : " << test.equal_range("Coucou").first->first << " ---- " << test.equal_range("Coucou").second->first<< std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____lower_bound_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		std::cout << "lower_bound de \"Coucou\" : " << test.lower_bound("Coucou")->first << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____upper_bound_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		std::cout << "upper_bound de \"Coucou\" : " << test.upper_bound("Coucou")->first << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____key_comp_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		std::cout << std::boolalpha;
+		map test1(test.key_comp(), a);
+		test1.insert(ft::make_pair("Hello", 10));
+		test1.insert(ft::make_pair("Hi", 10));
+		test1.insert(ft::make_pair("Bonjour", 10));
+		test1.insert(ft::make_pair("Ola", 10));		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____relational operators_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		std::cout << std::boolalpha;
+		map test1(comp, a);
+		test1.insert(ft::make_pair("Obrigad", 10));
+		test1.insert(ft::make_pair("Gracias", 10));
+		test1.insert(ft::make_pair("Thanks", 10));
+		std::cout << "> : " << (test > test1) << std::endl;
+		std::cout << ">= : " << (test >= test1) << std::endl;
+		std::cout << "< : " << (test < test1) << std::endl;
+		std::cout << "<= : " << (test <= test1) << std::endl;
+		std::cout << "== : " << (test == test1) << std::endl;
+		std::cout << "!= : " << (test != test1) << std::endl;
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "_____iterators_____" << std::endl;
+		std::allocator<ft::pair<const std::string, int> > a;
+		std::less<const std::string> comp;
+		map test(comp, a);
+		test.insert(ft::make_pair("Hello", 10));
+		test.insert(ft::make_pair("Hi", 10));
+		test.insert(ft::make_pair("Bonjour", 10));
+		test.insert(ft::make_pair("Ola", 10));
+		map::iterator it = test.begin();
+		std::cout << (*++it).first << std::endl;
+		std::cout << (*--it).first << std::endl;
+		std::cout << it->first << std::endl;
+	}
 	// time differences 
-
-	gettimeofday(&time, NULL);  //END-TIME
-
-	totalTime = ((time.tv_sec * 1000000) + (time.tv_usec) - totalTime);
-
-	std::cout << "Execution time is " << totalTime << std::endl;
-
-	std::cout << std::endl << std::endl << std::endl;
-
-
-	std::cout << "________________EXTRA TESTS________________" << std::endl;
-
 }
 
 #elif VERSION == 1

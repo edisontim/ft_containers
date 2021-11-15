@@ -9,7 +9,13 @@ namespace ft
 	typename ft::iterator_traits<InputIterator>::difference_type
 	distance (InputIterator first, InputIterator last)
 	{
-		return (last - first);
+		typename ft::iterator_traits<InputIterator>::difference_type i = 0;
+		while (first != last)
+		{
+			i++;
+			first++;
+		}
+		return (i);
 	}
 
 	template <class InputIterator, class Distance>
@@ -51,72 +57,51 @@ namespace ft
 	template<typename T> struct is_integral_base: std::false_type {};
 
 	template<> struct is_integral_base<bool>						: public std::true_type {};
-	
 	template<> struct is_integral_base<char>						: public std::true_type {};
 	template<> struct is_integral_base<unsigned char>				: public std::true_type {};
-	
 	template<> struct is_integral_base<char16_t>					: public std::true_type {};
 	template<> struct is_integral_base<char32_t>					: public std::true_type {};
-	
 	template<> struct is_integral_base<wchar_t>						: public std::true_type {};
 	template<> struct is_integral_base<unsigned wchar_t>			: public std::true_type {};
-
 	template<> struct is_integral_base<short>						: public std::true_type {};
 	template<> struct is_integral_base<unsigned short>				: public std::true_type {};
-	
 	template<> struct is_integral_base<int>							: public std::true_type {};
-	
 	template<> struct is_integral_base<long>						: public std::true_type {};
 	template<> struct is_integral_base<unsigned long>				: public std::true_type {};
-	
 	template<> struct is_integral_base<long long>					: public std::true_type {};
 	template<> struct is_integral_base<unsigned long long>			: public std::true_type {};
 
 
 
 	template<> struct is_integral_base<const bool>						: public std::true_type {};
-	
 	template<> struct is_integral_base<const char>						: public std::true_type {};
 	template<> struct is_integral_base<const unsigned char>				: public std::true_type {};
-	
 	template<> struct is_integral_base<const char16_t>					: public std::true_type {};
 	template<> struct is_integral_base<const char32_t>					: public std::true_type {};
-	
 	template<> struct is_integral_base<const wchar_t>						: public std::true_type {};
 	template<> struct is_integral_base<const unsigned wchar_t>			: public std::true_type {};
-
 	template<> struct is_integral_base<const short>						: public std::true_type {};
 	template<> struct is_integral_base<const unsigned short>				: public std::true_type {};
-	
 	template<> struct is_integral_base<const int>							: public std::true_type {};
-	
 	template<> struct is_integral_base<const long>						: public std::true_type {};
 	template<> struct is_integral_base<const unsigned long>				: public std::true_type {};
-	
 	template<> struct is_integral_base<const long long>					: public std::true_type {};
 	template<> struct is_integral_base<const unsigned long long>			: public std::true_type {};
 
 
 
 	template<> struct is_integral_base<volatile bool>						: public std::true_type {};
-	
 	template<> struct is_integral_base<volatile char>						: public std::true_type {};
 	template<> struct is_integral_base<volatile unsigned char>				: public std::true_type {};
-	
 	template<> struct is_integral_base<volatile char16_t>					: public std::true_type {};
 	template<> struct is_integral_base<volatile char32_t>					: public std::true_type {};
-	
 	template<> struct is_integral_base<volatile wchar_t>						: public std::true_type {};
 	template<> struct is_integral_base<volatile unsigned wchar_t>			: public std::true_type {};
-
 	template<> struct is_integral_base<volatile short>						: public std::true_type {};
 	template<> struct is_integral_base<volatile unsigned short>				: public std::true_type {};
-	
 	template<> struct is_integral_base<volatile int>							: public std::true_type {};
-	
 	template<> struct is_integral_base<volatile long>						: public std::true_type {};
 	template<> struct is_integral_base<volatile unsigned long>				: public std::true_type {};
-	
 	template<> struct is_integral_base<volatile long long>					: public std::true_type {};
 	template<> struct is_integral_base<volatile unsigned long long>			: public std::true_type {};
 

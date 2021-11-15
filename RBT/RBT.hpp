@@ -19,7 +19,7 @@ namespace ft
 		COLOR		color;
 
 		Node() : parent(nullptr), left(nullptr), right(nullptr), color(BLACK) {}
-		Node (value_type v) : data(v), parent(nullptr), left(nullptr), right(nullptr), color(BLACK) {}
+		Node (value_type v) : data(v), parent(nullptr), left(nullptr), right(nullptr), color(BLACK){}
 		~Node() {}
 	};
 
@@ -36,12 +36,13 @@ namespace ft
 			typedef typename Container::key_compare									key_compare;
 			typedef typename Container::size_type									size_type;
 
+
 		private:
 			Node_ptr				root;
+			size_type 				size;
 			Node_ptr				TNULL;
 			key_compare				comp;
 			allocator_type			allocator;
-			size_type 				size;
 
 
 			void initialize_NULL_node (Node_ptr node, Node_ptr parent)
@@ -91,6 +92,16 @@ namespace ft
 					return search_tree_helper(node->left, key);
 				return search_tree_helper(node->right, key);
 			}
+
+			Node_ptr search_tree_helper(Node_ptr node, key_type key) const
+			{
+				if (node == TNULL || (!comp(key, node->data.first) && !comp(node->data.first, key)))
+					return (node);
+				if (comp(key, node->data.first))
+					return search_tree_helper(node->left, key);
+				return search_tree_helper(node->right, key);
+			}
+			
 			//fix the rb tree that has been modified by the delete operation
 			void fix_delete(Node_ptr x)
 			{
@@ -207,9 +218,9 @@ namespace ft
 						node = node->left;
 				}
 
+				//couldn't find the key inside the tree
 				if (z == TNULL)
 				{
-					std::cout << "Couldn't find the key inside the binary tree" << std::endl;
 					return ;
 				}
 				
@@ -396,9 +407,37 @@ namespace ft
 				return (clear_helper(t));
 			}
 
+			size_type max_size(void) const
+			{
+				return (allocator.max_size());
+			}
+
 			~RBTree()
 			{
 				clear(root);
+				allocator.destroy(TNULL);
+				allocator.deallocate(TNULL, 1);
+			}
+
+			void swap(RBTree &other)
+			{
+				Node_ptr				root_buff = other.root;
+				size_type 				size_buff = other.size;
+				Node_ptr				TNULL_buff = other.TNULL;
+				key_compare				comp_buff = other.comp;
+				allocator_type			allocator_buff = other.allocator;
+
+				other.root = root;
+				other.size = size;
+				other.TNULL = TNULL;
+				other.comp = comp;
+				other.allocator = allocator;
+
+				root = root_buff;
+				size = size_buff;
+				TNULL = TNULL_buff;
+				comp = comp_buff;
+				allocator = allocator_buff;
 			}
 
 			void set_root(Node_ptr t)
@@ -440,7 +479,21 @@ namespace ft
 				return search_tree_helper(this->root, k);
 			}
 
+			Node_ptr search_tree(const key_type &k) const 
+			{
+				return search_tree_helper(this->root, k);
+			}
+
 			Node_ptr minimum(Node_ptr node)
+			{
+				if (node == TNULL)
+					return (node);
+				while (node->left != TNULL)
+					node = node->left;
+				return (node);
+			}
+			
+			Node_ptr minimum(Node_ptr node) const
 			{
 				if (node == TNULL)
 					return (node);
@@ -458,7 +511,33 @@ namespace ft
 				return (node);
 			}
 
+			Node_ptr maximum(Node_ptr node) const
+			{
+				if (node == TNULL || node == nullptr)
+					return (node);
+				while (node->right != TNULL)
+					node = node->right;
+				return (node);
+			}
+
 			Node_ptr predecessor(Node_ptr x)
+			{
+				if (x == maximum(root) + 1)
+					return maximum(root);
+				if (x == minimum(root))
+					return (minimum(root) - 1);
+				if (x->left != TNULL)
+					return maximum(x->left);
+				Node_ptr y = x->parent;
+				while (y != get_root() && y != TNULL && x == y->left)
+				{
+					x = y;
+					y = y->parent;
+				}
+				return (y);
+			}
+			
+			Node_ptr predecessor(Node_ptr x) const
 			{
 				if (x == maximum(root) + 1)
 					return maximum(root);
@@ -492,7 +571,7 @@ namespace ft
 				return (y);
 			}
 
-			const Node_ptr successor(Node_ptr x) const
+			Node_ptr successor(Node_ptr x) const
 			{
 				if (x == maximum(root))
 					return (x + 1);
